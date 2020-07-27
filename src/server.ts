@@ -1,8 +1,60 @@
 import express from 'express';
-import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+// import cors from 'cors';
+import * as dotenv from "dotenv";
 
+//Import Middlewares
+import errorHandler from './middlewares/error-handler';
+import isUserAuthenticated from './middlewares/authentication-verification';
+
+// Import Routes
+import userRoutes from './user/user.routes';
+import gameRoutes from './game/game.routes';
+
+// main app
 const app = express();
 
-app.use(bodyParser.json());
+// Environment variables
+dotenv.config();
 
-app.listen(3000);
+// Middlewares
+app.use(express.json());
+// app.use(errorHandler); // need to fix this
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+// app.use(cors({ origin: process.env.FRONTEND as string}));
+
+// Routes
+app.use('/user', userRoutes);
+app.use('/game', //isUserAuthenticated, 
+    gameRoutes);
+// Default route
+app.get('/', (req, res, next) => {
+    res.send({ message: 'Default route' });
+});
+
+
+// Database Connection
+const DB_CONNECTION = process.env.DB_CONNECTION as string;
+mongoose.connect(DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
+    .catch(function (reason) {
+        console.log('Unable to connect to the mongodb instance. Error: ', reason);
+    });
+
+// Server 
+const PORT: number = parseInt(process.env.PORT as string);
+const server = app.listen(PORT, () => { console.log("Server is running.") });
+
+// Socket.IO
+import socketIO from 'socket.io';
+
+const io = socketIO(server);
+io.on('connection', socket => {
+    console.log('Websockets connected.');
+});
+
+
