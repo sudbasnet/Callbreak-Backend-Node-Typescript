@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 // import cors from 'cors';
 import * as dotenv from "dotenv";
+import socketIO from 'socket.io';
 
 //Import Middlewares
 import errorHandler from './middlewares/error-handler';
@@ -19,7 +20,7 @@ dotenv.config();
 
 // Middlewares
 app.use(express.json());
-// app.use(errorHandler); // need to fix this
+app.use(errorHandler);
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
@@ -37,7 +38,6 @@ app.get('/', (req, res, next) => {
     res.send({ message: 'Default route' });
 });
 
-
 // Database Connection
 const DB_CONNECTION = process.env.DB_CONNECTION as string;
 mongoose.connect(DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -46,12 +46,13 @@ mongoose.connect(DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: tru
     });
 
 // Server 
+// ------
+// We could add a logic such that the server starts 
+// only if the database connection succeeds
 const PORT: number = parseInt(process.env.PORT as string);
 const server = app.listen(PORT, () => { console.log("Server is running.") });
 
 // Socket.IO
-import socketIO from 'socket.io';
-
 const io = socketIO(server);
 io.on('connection', socket => {
     console.log('Websockets connected.');
