@@ -9,17 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sudbasnet/callbreak-backend-typescript.git"
+    "url": "git+https://github.com/sudbasnet/Callbreak-Backend-Node-Typescript.git"
   },
   "author": "sudbasnet10@gmail.com",
   "license": "CC0-1.0",
   "bugs": {
-    "url": "https://github.com/sudbasnet/callbreak-backend-typescript/issues"
+    "url": "https://github.com/sudbasnet/Callbreak-Backend-Node-Typescript.git/issues"
   },
-  "homepage": "https://github.com/sudbasnet/callbreak-backend-typescript#readme",
+  "homepage": "https://github.com/sudbasnet/Callbreak-Backend-Node-Typescript#readme",
   "dependencies": {
-    "@types/bcryptjs": "^2.4.2",
-    "@types/jsonwebtoken": "^8.5.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -38,6 +36,8 @@
     "@types/mongoose": "^5.7.32",
     "@types/node": "^14.0.26",
     "@types/socket.io": "^2.1.10",
+    "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^8.5.0",
     "nodemon": "^2.0.4"
   }
 }
