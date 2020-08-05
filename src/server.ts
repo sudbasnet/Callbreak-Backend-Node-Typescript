@@ -1,12 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
-// import cors from 'cors';
+import cors from 'cors';
 import * as dotenv from "dotenv";
 import socketIO from 'socket.io';
 
 //Import Middlewares
-import errorHandler from './middlewares/error-handler';
-import isUserAuthenticated from './middlewares/authentication-verification';
+import errorHandler from './_middlewares/error-handler';
+import isUserAuthenticated from './_middlewares/authentication-verification';
 
 // Import Routes
 import userRoutes from './user/user.routes';
@@ -21,19 +21,12 @@ dotenv.config();
 // Middlewares
 app.use(express.json());
 app.use(errorHandler);
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
-// app.use(cors({ origin: process.env.FRONTEND as string}));
+app.use(cors({ origin: process.env.FRONTEND as string }));
 
 // Routes
 app.use('/user', userRoutes);
 app.use('/game', //isUserAuthenticated, 
     gameRoutes);
-// Default route
 app.get('/', (req, res, next) => {
     res.send({ message: 'Default route' });
 });
