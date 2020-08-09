@@ -1,12 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import * as dotenv from "dotenv";
+import * as dotenv from 'dotenv';
 import socketIO from 'socket.io';
 
 //Import Middlewares
 import errorHandler from './_middlewares/error-handler';
-import isUserAuthenticated from './_middlewares/authentication-verification';
+import verifyAuthentication from './_middlewares/authentication-verification';
 
 // Import Routes
 import userRoutes from './user/user.routes';
@@ -25,8 +25,7 @@ app.use(cors({ origin: process.env.FRONTEND as string }));
 
 // Routes
 app.use('/user', userRoutes);
-app.use('/game', //isUserAuthenticated, 
-    gameRoutes);
+app.use('/game', verifyAuthentication, gameRoutes);
 app.get('/', (req, res, next) => {
     res.send({ message: 'Default route' });
 });
@@ -46,6 +45,7 @@ const PORT: number = parseInt(process.env.PORT as string);
 const server = app.listen(PORT, () => { console.log("Server is running.") });
 
 // Socket.IO
+// We will use this during the game
 const io = socketIO(server);
 io.on('connection', socket => {
     console.log('Websockets connected.');
