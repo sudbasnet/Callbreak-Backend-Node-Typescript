@@ -45,7 +45,6 @@ const PORT: number = parseInt(process.env.PORT as string);
 const server = app.listen(PORT, () => { console.log("Server is running.") });
 
 // Socket.IO
-// We will use this during the game
 const io = socketIO(server);
 io.on('connection', socket => {
     console.log('Websockets connected.');

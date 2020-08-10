@@ -4,6 +4,8 @@ import deletePermanently from './use-cases/delete-permanently';
 import deactivate from './use-cases/deactivate';
 import resetPassword from './use-cases/reset-password';
 import verifyEmail from './use-cases/verify-email';
+import requestPasswordReset from './use-cases/request-password-reset';
+import requestVerificationEmail from './use-cases/request-verification-email';
 
 export default {
     userRegistration,
@@ -11,5 +13,7 @@ export default {
     deactivate,
     deletePermanently,
     resetPassword,
-    verifyEmail
+    verifyEmail,
+    requestPasswordReset,
+    requestVerificationEmail
 };
