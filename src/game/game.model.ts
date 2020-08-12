@@ -1,14 +1,8 @@
 import { model, Schema, Document } from 'mongoose';
 import { IUserSchema } from '../user/user.model';
+import Hand from '../_entities/Hand';
 
-type Hand = {
-    spades: string[];
-    hearts: string[];
-    clubs: string[];
-    diamonds: string[];
-};
-
-type Round = {
+export interface Round {
     num: number;
     starterPlayer: IUserSchema['_id'];
     playedTheirHands: IUserSchema['_id'][];
@@ -20,14 +14,14 @@ type Round = {
     winningThisTurn: IUserSchema['_id'];
 };
 
-type Player = {
+export interface Player {
     userType: string;
     order: number;
     userId: IUserSchema['_id'];
-    pointsTotal: number;
-    pointsCurrentGame: number;
-    cards: Hand;
-    bet: number;
+    pointsTotal?: number;
+    pointsCurrentGame?: number;
+    cards?: Hand;
+    bet?: number;
 };
 
 export interface IGameSchema extends Document {
