@@ -5,7 +5,7 @@ interface Token {
     expires: Date;
 };
 
-export interface IUserSchema extends Document {
+export interface UserSchema extends Document {
     name: string;
     email: string;
     password: string;
@@ -15,7 +15,7 @@ export interface IUserSchema extends Document {
     passwordReset?: Token
 };
 
-const UserSchema: Schema = new Schema({
+const User: Schema = new Schema({
     name: { type: String, required: true, min: 3, max: 225 },
     email: { type: String, required: true, min: 6, max: 225 },
     password: { type: String, required: true, max: 1024, min: 6 },
@@ -31,4 +31,4 @@ const UserSchema: Schema = new Schema({
     { timestamps: true }
 );
 
-export default model<IUserSchema>('User', UserSchema);
+export default model<UserSchema>('User', User);

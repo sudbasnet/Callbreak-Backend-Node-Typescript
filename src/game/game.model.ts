@@ -1,32 +1,32 @@
 import { model, Schema, Document } from 'mongoose';
-import { IUserSchema } from '../user/user.model';
-import Hand from '../_entities/Hand';
+import { UserSchema } from '../user/user.model';
+import { Hand } from '../_entities/Deck';
 
 export interface Round {
     num: number;
-    starterPlayer: IUserSchema['_id'];
-    playedTheirHands: IUserSchema['_id'][];
+    starterPlayer: UserSchema['_id'];
+    playedTheirHands: UserSchema['_id'][];
     starterSuit: string;
     overriddenBySpade: boolean;
     cardsOnTheTable: string[];
     turn: number;
-    nextPlayer: IUserSchema['_id'];
-    winningThisTurn: IUserSchema['_id'];
+    nextPlayer: UserSchema['_id'];
+    winningThisTurn: UserSchema['_id'];
 };
 
 export interface Player {
     userType: string;
     order: number;
-    userId: IUserSchema['_id'];
+    userId: UserSchema['_id'];
     pointsTotal?: number;
     pointsCurrentGame?: number;
     cards?: Hand;
     bet?: number;
 };
 
-export interface IGameSchema extends Document {
+export interface GameSchema extends Document {
     status: string;
-    createdBy: IUserSchema['_id'];
+    createdBy: UserSchema['_id'];
     gameType: string;
     players: Player[];
     start: Date;
@@ -35,7 +35,7 @@ export interface IGameSchema extends Document {
     round: Round;
 };
 
-const GameSchema: Schema = new Schema({
+const Game: Schema = new Schema({
     status: { type: String, required: true },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     gameType: { type: String, required: true },
@@ -78,4 +78,4 @@ const GameSchema: Schema = new Schema({
     }
 });
 
-export default model<IGameSchema>('Game', GameSchema);
+export default model<GameSchema>('Game', Game);

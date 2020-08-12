@@ -8,8 +8,7 @@ const start: RequestHandler = async (req, res, next) => {
     const gameType = req.params.gameType;
     const gameId = req.params.gameId;
 
-    const deck = new Deck();
-    const dealtCardsObject = deck.dealCards(13, 4); //dealing 13 cards to 4 players
+    const dealtCardsObject = Deck.dealCards(13, 4); //dealing 13 cards to 4 players
     const remainingCards = dealtCardsObject.remaining;
 
     try {
