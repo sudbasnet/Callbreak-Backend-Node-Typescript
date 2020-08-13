@@ -14,7 +14,7 @@ router.get('/:userId/request-verification-email', userController.requestVerifica
 
 router.get('/:userId/verify/:verificationCode', userController.verifyEmail);
 
-router.post('/request-password-reset', userController.requestPasswordReset);
+router.get('/:userId/request-password-reset', userController.requestPasswordReset);
 
 router.post('/:userId/password-reset/:resetCode', userController.resetPassword);
 

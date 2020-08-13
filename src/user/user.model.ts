@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 
-interface Token {
+export interface Token {
     token: string;
     expires: Date;
 };
