@@ -1,14 +1,9 @@
-import { RequestHandler } from 'express';
-
 import User from '../user.model';
-
 import CustomError from '../../_helpers/custom-error';
 
+import { RequestHandler } from 'express';
 import bcrypt from 'bcryptjs';
-
 import { validationResult } from 'express-validator';
-
-const accountVerificationEmail = require('../../_helpers/account-verification-email');
 
 const register: RequestHandler = async (req, res, next) => {
     try {
@@ -23,14 +18,9 @@ const register: RequestHandler = async (req, res, next) => {
             name: req.body.name, email: req.body.email, password: hashedPassword,
             active: true // remove this in production
         });
-
         const savedUser = await newUser.save();
-
-        res.status(201).json({ message: 'User created, verify email', userId: savedUser._id });
-
-        // const verifyAccount = await accountVerificationEmail(savedUser._id);
-        // removing the email verification for testing, need to be active for actual application
-
+        req.params.userId = savedUser._id;
+        next();
     }
     catch (err) {
         next(err);

@@ -6,7 +6,7 @@ import registrationDataValidation from '../_middlewares/registration-data-valida
 
 const router = Router();
 
-router.put('/register', registrationDataValidation, userController.userRegistration);
+router.put('/register', registrationDataValidation, userController.userRegistration, userController.requestVerificationEmail);
 
 router.post('/login', userController.userLogin);
 
@@ -14,7 +14,7 @@ router.get('/:userId/request-verification-email', userController.requestVerifica
 
 router.get('/:userId/verify/:verificationCode', userController.verifyEmail);
 
-router.get('/:userId/request-password-reset', userController.requestPasswordReset);
+router.get('/request-password-reset/:email', userController.requestPasswordReset);
 
 router.post('/:userId/password-reset/:resetCode', userController.resetPassword);
 
