@@ -1,4 +1,3 @@
-import accountVerificationEmail from '../../_helpers/account-verification-email';
 import { RequestHandler } from 'express';
 import sendgridEmail from '../../_helpers/sendgrid-token-email';
 import EmailData from '../../_entities/EmailData';
