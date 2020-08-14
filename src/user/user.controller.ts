@@ -6,6 +6,7 @@ import resetPassword from './use-cases/reset-password';
 import verifyEmail from './use-cases/verify-email';
 import requestPasswordReset from './use-cases/request-password-reset';
 import requestVerificationEmail from './use-cases/request-verification-email';
+import updatePassword from './use-cases/update-password';
 
 export default {
     userRegistration,
@@ -15,5 +16,6 @@ export default {
     resetPassword,
     verifyEmail,
     requestPasswordReset,
-    requestVerificationEmail
+    requestVerificationEmail,
+    updatePassword
 };

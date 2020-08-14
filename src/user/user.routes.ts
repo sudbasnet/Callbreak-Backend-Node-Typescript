@@ -3,6 +3,7 @@ import { Router } from 'express';
 import userController from './user.controller';
 import authenticationVerification from '../_middlewares/authentication-verification';
 import registrationDataValidation from '../_middlewares/registration-data-validation';
+import updatedPasswordValidation from '../_middlewares/updated-password-validation';
 
 const router = Router();
 
@@ -24,5 +25,7 @@ router.get('/:userId/password-reset/:resetCode', (req, res, next) => { }); /// r
 router.get('/deactivate', authenticationVerification, userController.deactivate);
 
 router.get('/delete_account', authenticationVerification, userController.deletePermanently);
+
+router.put('/update-password', updatedPasswordValidation, userController.updatePassword);
 
 export default router;
