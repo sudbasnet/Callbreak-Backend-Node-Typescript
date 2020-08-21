@@ -11,8 +11,8 @@ export interface UserSchema extends Document {
     password: string;
     active: boolean;
     role?: string;
-    verification?: Token,
-    passwordReset?: Token
+    verification?: Token;
+    passwordReset?: Token;
 };
 
 export enum UserRole { ADMIN = 'admin', PLAYER = 'player' };

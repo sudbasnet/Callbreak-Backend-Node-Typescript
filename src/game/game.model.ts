@@ -1,81 +1,120 @@
 import { model, Schema, Document } from 'mongoose';
 import { UserSchema } from '../user/user.model';
-import { Hand } from '../_entities/Deck';
+import { Card, Hand } from '../_entities/Deck';
 
-export interface Round {
-    num: number;
-    starterPlayer: UserSchema['_id'];
-    playedTheirHands: UserSchema['_id'][];
-    starterSuit: string;
-    overriddenBySpade: boolean;
-    cardsOnTheTable: string[];
-    turn: number;
-    nextPlayer: UserSchema['_id'];
-    winningThisTurn: UserSchema['_id'];
+export const enum gameStatus {
+    "WAITING" = "waiting",
+    "JOINING" = "joining",
+    "DEALT" = "dealt",
+    "ON" = "on",
+    "COMPLETE" = "complete"
 };
 
-export interface Player {
-    userType: string;
-    order: number;
-    userId: UserSchema['_id'];
-    pointsTotal?: number;
-    pointsCurrentGame?: number;
+export interface GlobalData {
+    gameNumber: number;
+    roundNumber: number;
+    turnNumber: number;
+    scores: { round: number, playerId: UserSchema['_id'], score: number }[];
+    bets: { round: number, playerId: UserSchema['_id'], bet: number }[];
+    playedRounds: { playerId: string, card: Card }[][];
+    currentTurn: UserSchema['_id'];
+    nextTurn?: UserSchema['_id'];
+    currentSuit?: string;
+    overriddenBySpade?: boolean;
+};
+
+export interface PlayerData {
+    playerId: UserSchema['_id'];
     cards?: Hand;
-    bet?: number;
+    possibleMoves?: Card[];
+};
+
+export interface LogData {
+    status: gameStatus;
+    createdBy: UserSchema['_id'];
+    gameType: string;
+    players: UserSchema['_id'][];
+    start: Date;
+    end?: Date;
 };
 
 export interface GameSchema extends Document {
-    status: string;
-    createdBy: UserSchema['_id'];
-    gameType: string;
-    players: Player[];
-    start: Date;
-    end?: Date;
-    gameNumber: number; // 4 subgames in on main game
-    round: Round;
+    global: GlobalData;
+    players: PlayerData[];
+    log: LogData;
 };
 
 const Game: Schema = new Schema({
-    status: { type: String, required: true },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    gameType: { type: String, required: true },
-    players: {
-        type: [{
-            userType: { type: String, required: true },
-            order: { type: Number, required: true },
-            userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-            pointsTotal: { type: Number },
-            pointsCurrentGame: { type: Number },
-            cards: {
-                type:
-                {
-                    spades: { type: [String] },
-                    hearts: { type: [String] },
-                    clubs: { type: [String] },
-                    diamonds: { type: [String] },
-                }
-            },
-            bet: { type: Number }
-        }],
-        validate: [(playersArray) => playersArray.length <= 4, 'Game is full.'],
-        required: true
-    },
-    start: { type: Date, default: Date.now },
-    end: { type: Date, default: Date.now },
-    gameNumber: { type: Number }, // 4 subgames in on main game
-    round: { // 13 rounds in each subgame
+    global: {
         type: {
-            num: { type: Number },
-            starterPlayer: { type: Schema.Types.ObjectId, ref: 'User', required: true }, //player that started the round
-            playedTheirHands: { type: [{ type: Schema.Types.ObjectId, ref: 'User' }] },
-            starterSuit: { type: String },
-            overriddenBySpade: { type: Boolean }, // has spades taken over?
-            cardsOnTheTable: { type: [String] }, // 4 or less cards
-            turn: { type: Number }, // 4 turns in each round
-            nextPlayer: { type: Schema.Types.ObjectId, ref: 'User', required: true }, // the player who can make a move (player's ID)
-            winningThisTurn: { type: Schema.Types.ObjectId, ref: 'User', required: true } // the player that's winning this round so far
+            gameNumber: { type: Number, default: 0 },
+            roundNumber: { type: Number, default: 0 },
+            turnNumber: { type: Number, default: 0 },
+            scores: {
+                type: [{
+                    round: { type: Number },
+                    playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+                    score: { type: Number }
+                }]
+            },
+            bets: {
+                type: [{
+                    round: { type: Number },
+                    playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+                    bet: { type: Number }
+                }]
+            },
+            playedRounds: {
+                type:
+                    [[{
+                        playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+                        card: {
+                            type:
+                            {
+                                suit: String,
+                                value: String
+                            }
+                        }
+                    }]]
+            },
+            currentTurn: { type: Schema.Types.ObjectId, ref: 'User', required: false },
+            nextTurn: { type: Schema.Types.ObjectId, ref: 'User', required: false },
+            currentSuit: { type: String, required: false },
+            overriddenBySpade: { type: Boolean, default: false }
+        }
+    },
+    players: {
+        type:
+            [{
+                playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+                cards: {
+                    type:
+                        [{
+                            suit: String,
+                            value: String
+                        }]
+                },
+                possibleMoves: {
+                    type:
+                        [{
+                            suit: String,
+                            value: String
+                        }]
+                }
+            }]
+    },
+    log: {
+        type:
+        {
+            status: { type: String },
+            createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+            gameType: { type: String },
+            players: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+            start: { type: Date },
+            end: { type: Date, required: false }
         }
     }
 });
+
 
 export default model<GameSchema>('Game', Game);

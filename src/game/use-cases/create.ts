@@ -1,4 +1,4 @@
-import Game from '../game.model';
+import Game, { gameStatus } from '../game.model';
 import { RequestHandler } from 'express';
 
 const create: RequestHandler = async (req, res, next) => {
@@ -7,14 +7,33 @@ const create: RequestHandler = async (req, res, next) => {
 
     try {
         const game = new Game({
-            status: 'waiting',
-            gameType: gameType,
-            createdBy: userId,
-            players: [{
-                order: 0,
-                userType: 'player',
-                userId: userId
-            }]
+            global: {
+                gameNumber: 0,
+                roundNumber: 0,
+                turnNumber: 0,
+                scores: [],
+                bets: [],
+                playedRounds: [],
+                currentTurn: userId,
+                nextTurn: null,
+                currentSuit: null,
+                overriddenBySpades: false
+            },
+            players:
+                [
+                    {
+                        playerId: userId,
+                        cards: [],
+                        possibleMoves: []
+                    }
+                ],
+            log: {
+                status: gameStatus.WAITING,
+                createdBy: userId,
+                gameType: gameType,
+                players: [userId],
+                start: new Date()
+            }
         });
         const savedGame = await game.save();
         res.status(200).json({ gameType: gameType, gameId: savedGame._id });

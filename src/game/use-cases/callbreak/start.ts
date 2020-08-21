@@ -1,4 +1,4 @@
-import Game, { Player } from '../../game.model';
+import Game, { gameStatus } from '../../game.model';
 import Deck from '../../../_entities/Deck';
 import CustomError from '../../../_helpers/custom-error';
 import { RequestHandler } from 'express';
@@ -18,35 +18,35 @@ const start: RequestHandler = async (req, res, next) => {
             throw new CustomError('The game does not exist.', 404);
         }
 
-        const isValidPlayer = game.players.map(x => x.userId).includes(userId);
-        const botPlayer: Player = {
-            userType: 'bot',
-            userId: userId,
-            order: 99
-        };
+        const isValidPlayer = game.players.map(x => x.playerId).includes(userId);
 
-        if (isValidPlayer && game.status == 'waiting') {
+        if (isValidPlayer && game.log.status == gameStatus.WAITING) {
             while (game.players.length < 4) {
-                game.players.push(botPlayer);
+                game.players.push({ playerId: "bot-" + game.players.length });
             }
             for (let i = 0; i < 4; i++) {
                 game.players[i].cards = dealtCardsObject.dealt[i];
+                game.global.scores.push(
+                    {
+                        round: 0,
+                        playerId: game.players[i].playerId,
+                        score: 0
+                    }
+                );
+                game.global.bets.push(
+                    {
+                        round: 0,
+                        playerId: game.players[i].playerId,
+                        bet: 0
+                    }
+                );
             }
 
-            game.status = 'on';
-            game.gameNumber = 1;
-            game.round = {
-                num: 1, // starts as round 1
-                starterSuit: '', // not thrown yet, so we dont know
-                starterPlayer: null,
-                playedTheirHands: [],
-                overriddenBySpade: false, // is the turn overridden by a spade?
-                cardsOnTheTable: [], // None at the start of the game
-                turn: 1, // first turn
-                nextPlayer: 0, // players.order
-                winningThisTurn: null
-            };
-            game.end = new Date(); // gets updated at the end of each turn
+            game.global.playedRounds = [[]];
+            game.global.nextTurn = userId;
+
+            game.log.status = gameStatus.DEALT;
+            game.log.end = new Date();
 
             const savedGame = await game.save();
             res.status(200).json(savedGame);
