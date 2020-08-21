@@ -31,6 +31,7 @@ export interface PlayerData {
 
 export interface LogData {
     status: gameStatus;
+    playersReady: number;
     createdBy: UserSchema['_id'];
     gameType: string;
     players: UserSchema['_id'][];
@@ -107,6 +108,7 @@ const Game: Schema = new Schema({
         type:
         {
             status: { type: String },
+            playersReady: { type: Number },
             createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
             gameType: { type: String },
             players: [{ type: Schema.Types.ObjectId, ref: 'User' }],

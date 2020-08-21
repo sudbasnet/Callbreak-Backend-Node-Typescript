@@ -5,11 +5,9 @@ import { RequestHandler } from 'express';
 
 const start: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
-    const gameType = req.params.gameType;
     const gameId = req.params.gameId;
 
-    const dealtCardsObject = Deck.dealCards(13, 4); //dealing 13 cards to 4 players
-    const remainingCards = dealtCardsObject.remaining;
+    const dealtCardsObject = Deck.dealCards(13, 4);
 
     try {
         const game = await Game.findById(gameId);
@@ -56,4 +54,6 @@ const start: RequestHandler = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-}
+};
+
+export default start;
