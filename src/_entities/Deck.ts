@@ -3,13 +3,6 @@ export interface Card {
     value: string
 };
 
-export interface Hand {
-    spades: string[],
-    hearts: string[],
-    clubs: string[],
-    diamonds: string[]
-};
-
 class Deck {
     public static suites: string[] = ["hearts", "spades", "diamonds", "clubs"];
     public static faceCards: string[] = ["king", "queen", "jack", "ace"];
@@ -47,10 +40,10 @@ class Deck {
     static dealCards(numberOfCards: number, numberOfPlayers: number) {
         // eg: to deal 5 cards to 3 players, dealCards(5, 3)
         let deck = Deck.getFullDeck();
-        let dealtCards: Hand[] = [];
+        let dealtCards: Card[][] = [];
         let i = 0;
         while (i < numberOfPlayers) {
-            dealtCards.push({ spades: [], diamonds: [], clubs: [], hearts: [] });
+            dealtCards.push([]);
             i++;
         }
 
@@ -61,17 +54,7 @@ class Deck {
         while (deck.length > 0 && cardsDealt < numberOfCards * numberOfPlayers) {
             randomPosition = Deck.getRandomLocation(deck.length);
             randomCard = deck[randomPosition];
-
-            if (randomCard.suit === 'hearts') {
-                dealtCards[cardsDealt % numberOfPlayers].hearts.push(randomCard.value);
-            } else if (randomCard.suit === 'clubs') {
-                dealtCards[cardsDealt % numberOfPlayers].clubs.push(randomCard.value);
-            } else if (randomCard.suit === 'spades') {
-                dealtCards[cardsDealt % numberOfPlayers].spades.push(randomCard.value);
-            } else if (randomCard.suit === 'diamonds') {
-                dealtCards[cardsDealt % numberOfPlayers].diamonds.push(randomCard.value);
-            }
-
+            dealtCards[cardsDealt % numberOfPlayers].push(randomCard);
             deck.splice(randomPosition, 1); // remove 1 card from position "randomPosition"
             cardsDealt++;
         }

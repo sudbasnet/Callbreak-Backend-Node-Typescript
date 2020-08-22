@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { UserSchema } from '../user/user.model';
-import { Card, Hand } from '../_entities/Deck';
+import { Card } from '../_entities/Deck';
 
 export const enum gameStatus {
     "WAITING" = "waiting",
@@ -20,12 +20,13 @@ export interface GlobalData {
     currentTurn: UserSchema['_id'];
     nextTurn?: UserSchema['_id'];
     currentSuit?: string;
-    overriddenBySpade?: boolean;
+    currentWinningCard?: Card;
+    overriddenBySpade: boolean;
 };
 
 export interface PlayerData {
     playerId: UserSchema['_id'];
-    cards?: Hand;
+    cards?: Card[];
     possibleMoves?: Card[];
 };
 
@@ -81,6 +82,7 @@ const Game: Schema = new Schema({
             currentTurn: { type: Schema.Types.ObjectId, ref: 'User', required: false },
             nextTurn: { type: Schema.Types.ObjectId, ref: 'User', required: false },
             currentSuit: { type: String, required: false },
+            currentWinningCard: { type: { suit: String, value: String } },
             overriddenBySpade: { type: Boolean, default: false }
         }
     },
