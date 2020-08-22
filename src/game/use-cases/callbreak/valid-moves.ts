@@ -22,9 +22,13 @@ const validMoves: RequestHandler = async (req, res, next) => {
         const currentPlayerIndex = game.players.findIndex(x => x.playerId === userId);
         let player = game.players[currentPlayerIndex];
 
-        if (game.global.currentSuit && game.global.currentWinningCard && player.cards) {
-            let possibleMoves: Card[] = player.cards;
+        if (!player.cards) {
+            throw new CustomError('No cards available for the player.', 500);
+        }
 
+        let possibleMoves: Card[] = player.cards;
+
+        if (game.global.currentSuit && game.global.currentWinningCard) {
             const currentSuit = game.global.currentSuit;
             const currentWinningCard = game.global.currentWinningCard;
             const overriddenBySpade = game.global.overriddenBySpade;
@@ -57,14 +61,11 @@ const validMoves: RequestHandler = async (req, res, next) => {
                     }
                 }
             }
-
-            game.players[currentPlayerIndex].possibleMoves = possibleMoves;
-            const savedGame = await game.save();
-
-            res.status(200).json({ global: game.global, player: game.players[currentPlayerIndex], log: game.log });
-        } else {
-            throw new CustomError('Invalid Request', 500);
         }
+        game.players[currentPlayerIndex].possibleMoves = possibleMoves;
+        const savedGame = await game.save();
+
+        res.status(200).json({ global: game.global, player: game.players[currentPlayerIndex], log: game.log });
     } catch (err) {
         next(err);
     }
