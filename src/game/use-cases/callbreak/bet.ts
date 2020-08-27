@@ -2,6 +2,26 @@ import Game, { gameStatus } from '../../game.model';
 import CustomError from '../../../_helpers/custom-error';
 import { RequestHandler } from 'express';
 
+/*
+POST Request
+============
+userId --> comes from the req, jwt token
+gameType --> comes from the params as well
+gameId --> comes from the req.params
+bet --> comes from the body of the POST request
+
+Checks Required (other than typescript specific):
+================================================
+bet cannot be more than 13 and less than 1
+player is valid, ie; player exits in the game.players 
+
+Return??
+=======
+global: {}
+player: {}
+log: {}
+
+*/
 const bet: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
     const gameId = req.params.gameId;
@@ -23,14 +43,14 @@ const bet: RequestHandler = async (req, res, next) => {
             throw new CustomError('Bet needs to be between 1 and 13', 500);
         }
 
-        if (game.log.status === gameStatus.DEALT) {
+        if (game.status === gameStatus.DEALT) {
             const ind = game.global.bets.findIndex(x => x.playerId === userId);
             game.global.bets[ind].bet = bet;
 
-            if (game.log.playersReady === 3) {
-                game.log.status = gameStatus.ON;
+            if (game.playersReady === 3) {
+                game.status = gameStatus.ON;
             } else {
-                game.log.playersReady += 1;
+                game.playersReady += 1;
             }
 
             const savedGame = await game.save();

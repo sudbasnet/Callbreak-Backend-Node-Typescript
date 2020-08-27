@@ -1,0 +1,1 @@
+// GET request for updating the data from backend to the fontend

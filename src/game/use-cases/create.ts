@@ -1,11 +1,25 @@
 import Game, { gameStatus } from '../game.model';
 import { RequestHandler } from 'express';
+import User from '../../user/user.model';
+import CustomError from '../../_helpers/custom-error';
 
 const create: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
     const gameType = req.params.gameType;
 
     try {
+
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new CustomError('Invalid Request', 404);
+        }
+
+        // if the player has already created a game, then return the existing game
+        const incompleteGame = await Game.findOne({ createdBy: userId, status: { $ne: gameStatus.COMPLETE } });
+        if (incompleteGame) {
+            res.status(200).json({ global: incompleteGame.global, players: incompleteGame.players });
+        }
+
         const game = new Game({
             global: {
                 gameNumber: 0,
@@ -23,17 +37,16 @@ const create: RequestHandler = async (req, res, next) => {
                 [
                     {
                         playerId: userId,
+                        playerName: 'DummyName',
                         cards: [],
                         possibleMoves: []
                     }
                 ],
-            log: {
-                status: gameStatus.WAITING,
-                createdBy: userId,
-                gameType: gameType,
-                players: [userId],
-                start: new Date()
-            }
+
+            status: gameStatus.WAITING,
+            createdBy: userId,
+            gameType: gameType,
+            start: new Date()
         });
         const savedGame = await game.save();
         res.status(200).json({ gameType: gameType, gameId: savedGame._id });

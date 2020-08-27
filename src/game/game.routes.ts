@@ -4,7 +4,7 @@ import gameController from './game.controller';
 const router = Router();
 
 // CALLBREAK specific routes
-// router.get('/callbreak/:gameId/start', gameController.callbreakStart); // success method 200
+router.get('/callbreak/:gameId/start', gameController.start); // success method 200
 
 // Other Routes
 router.get('/:gameType/new', gameController.create); // returns a gameId

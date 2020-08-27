@@ -1,35 +1,47 @@
-export interface Card {
-    suit: string,
-    value: string
+import CustomError from "../_helpers/custom-error";
+
+export const enum suits {
+    SPADES = 'spades',
+    HEARTS = "hearts",
+    DIAMONDS = 'diamonds',
+    CLUBS = "clubs"
 };
 
-class Deck {
-    public static suites: string[] = ["hearts", "spades", "diamonds", "clubs"];
-    public static faceCards: string[] = ["king", "queen", "jack", "ace"];
-    public static numberCards: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10'];
+export const enum facecardValues {
+    JACK = 11,
+    KING = 12,
+    QUEEN = 13,
+    ACE = 14
+};
 
-    static getValue(card: Card): number {
-        let cardValue: number;
+export class Card {
+    constructor(public suit: string, public value: string) { }
+
+    public numericValue(): number {
         try {
-            return +card.value;
+            return + this.value;
         }
         catch (err) {
-            if (card.value === 'jack') {
-                return 11;
-            } else if (card.value === 'queen') {
-                return 12;
-            } else if (card.value === 'king') {
-                return 13;
-            } else {
-                return 14;
-            }
+            if (this.value === 'jack') {
+                return facecardValues.JACK;
+            } else if (this.value === 'queen') {
+                return facecardValues.QUEEN;
+            } else if (this.value === 'king') {
+                return facecardValues.KING;
+            } else if (this.value === 'ace')
+                return facecardValues.ACE;
         }
+        throw new CustomError('Invalid value of card.', 500);
     }
+};
 
-    static getFullDeck() {
+export default class Deck {
+    public static suites: suits[] = [suits.HEARTS, suits.SPADES, suits.DIAMONDS, suits.DIAMONDS];
+    public static cardValues: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', "ace", "king", "queen", "jack"];
+
+    public static getFullDeck() {
         let deck: Card[] = [];
-        Deck.suites.forEach(suit => Deck.numberCards.forEach(numberCard => deck.push({ suit: suit, value: numberCard })));
-        Deck.suites.forEach(suit => Deck.faceCards.forEach(faceCard => deck.push({ suit: suit, value: faceCard })));
+        Deck.suites.forEach(suit => Deck.cardValues.forEach(cardValue => deck.push(new Card(suit, cardValue))));
         return deck;
     }
 
@@ -37,7 +49,7 @@ class Deck {
         return Math.floor(Math.random() * Math.floor(len));
     }
 
-    static dealCards(numberOfCards: number, numberOfPlayers: number) {
+    public static dealCards(numberOfCards: number, numberOfPlayers: number) {
         // eg: to deal 5 cards to 3 players, dealCards(5, 3)
         let deck = Deck.getFullDeck();
         let dealtCards: Card[][] = [];
@@ -62,5 +74,3 @@ class Deck {
         return { dealt: dealtCards, remaining: deck };
     }
 };
-
-export default Deck;

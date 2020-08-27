@@ -26,24 +26,20 @@ export interface GlobalData {
 
 export interface PlayerData {
     playerId: UserSchema['_id'];
+    playerName: string;
     cards?: Card[];
     possibleMoves?: Card[];
-};
-
-export interface LogData {
-    status: gameStatus;
-    playersReady: number;
-    createdBy: UserSchema['_id'];
-    gameType: string;
-    players: UserSchema['_id'][];
-    start: Date;
-    end?: Date;
 };
 
 export interface GameSchema extends Document {
     global: GlobalData;
     players: PlayerData[];
-    log: LogData;
+    status: gameStatus;
+    playersReady: number;
+    createdBy: UserSchema['_id'];
+    gameType: string;
+    start: Date;
+    end?: Date;
 };
 
 const Game: Schema = new Schema({
@@ -54,15 +50,15 @@ const Game: Schema = new Schema({
             turnNumber: { type: Number, default: 0 },
             scores: {
                 type: [{
-                    round: { type: Number },
                     playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+                    round: { type: Number },
                     score: { type: Number }
                 }]
             },
             bets: {
                 type: [{
-                    round: { type: Number },
                     playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+                    round: { type: Number },
                     bet: { type: Number }
                 }]
             },
@@ -79,9 +75,9 @@ const Game: Schema = new Schema({
                         }
                     }]]
             },
-            currentTurn: { type: Schema.Types.ObjectId, ref: 'User', required: false },
-            nextTurn: { type: Schema.Types.ObjectId, ref: 'User', required: false },
-            currentSuit: { type: String, required: false },
+            currentTurn: { type: Schema.Types.ObjectId, ref: 'User' },
+            nextTurn: { type: Schema.Types.ObjectId, ref: 'User' },
+            currentSuit: { type: String },
             currentWinningCard: { type: { suit: String, value: String } },
             overriddenBySpade: { type: Boolean, default: false }
         }
@@ -89,7 +85,8 @@ const Game: Schema = new Schema({
     players: {
         type:
             [{
-                playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+                playerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+                playerName: { type: String, required: true },
                 cards: {
                     type:
                         [{
@@ -106,18 +103,13 @@ const Game: Schema = new Schema({
                 }
             }]
     },
-    log: {
-        type:
-        {
-            status: { type: String },
-            playersReady: { type: Number },
-            createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-            gameType: { type: String },
-            players: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-            start: { type: Date },
-            end: { type: Date, required: false }
-        }
-    }
+
+    status: { type: String },
+    playersReady: { type: Number },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    gameType: { type: String },
+    start: { type: Date },
+    end: { type: Date, required: false }
 });
 
 

@@ -1,4 +1,5 @@
 import Game, { gameStatus } from '../../game.model';
+import User, { UserSchema } from '../../../user/user.model';
 import Deck from '../../../_entities/Deck';
 import CustomError from '../../../_helpers/custom-error';
 import { RequestHandler } from 'express';
@@ -17,11 +18,16 @@ const start: RequestHandler = async (req, res, next) => {
         }
 
         const isValidPlayer = game.players.map(x => x.playerId).includes(userId);
-
-        if (isValidPlayer && game.log.status == gameStatus.WAITING) {
-            while (game.players.length < 4) {
-                game.players.push({ playerId: "bot-" + game.players.length });
+        console.log(game.status);
+        if (isValidPlayer && game.status === gameStatus.WAITING) {
+            let bots: UserSchema[] = [];
+            if (game.players.length < 4) {
+                bots = await User.find({ role: 'bot' });
             }
+            while (game.players.length < 4) {
+                game.players.push({ playerId: bots[3 - game.players.length]._id, playerName: bots[3 - game.players.length].name });
+            }
+
             for (let i = 0; i < 4; i++) {
                 game.players[i].cards = dealtCardsObject.dealt[i];
                 game.global.scores.push(
@@ -43,8 +49,8 @@ const start: RequestHandler = async (req, res, next) => {
             game.global.playedRounds = [[]];
             game.global.nextTurn = userId;
 
-            game.log.status = gameStatus.DEALT;
-            game.log.end = new Date();
+            game.status = gameStatus.DEALT;
+            game.end = new Date();
 
             const savedGame = await game.save();
             res.status(200).json(savedGame);

@@ -1,4 +1,5 @@
 import Game from '../game.model';
+import User from '../../user/user.model';
 import { RequestHandler } from 'express';
 import CustomError from '../../_helpers/custom-error';
 
@@ -9,7 +10,12 @@ const join: RequestHandler = async (req, res, next) => {
     try {
         const game = await Game.findById(gameId);
         if (!game) {
-            throw new CustomError('Cannot find game.', 500,);
+            throw new CustomError('Cannot find game.', 404);
+        }
+
+        const player = await User.findById(userId);
+        if (!player) {
+            throw new CustomError('Cannot find user.', 404);
         }
 
         const playerAlreadyJoined = game.players.map(x => x.playerId).includes(userId);
@@ -20,7 +26,8 @@ const join: RequestHandler = async (req, res, next) => {
         if (game.players.length <= 4) {
             game.players.push(
                 {
-                    playerId: userId
+                    playerId: userId,
+                    playerName: "Dummy"
                 });
             const savedGame = await game.save();
             res.status(200).json(savedGame);

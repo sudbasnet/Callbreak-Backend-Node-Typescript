@@ -9,9 +9,9 @@ const cancel: RequestHandler = async (req, res, next) => {
 
     try {
         const game = await Game.findById(gameId);
-        if (game && game.log.status != gameStatus.ON && userId) {
+        if (game && game.status != gameStatus.ON && userId) {
             // delete game if creator cancels
-            if (game.log.createdBy === userId) {
+            if (game.createdBy === userId) {
                 await Game.deleteOne({ _id: gameId });
                 res.status(201).json({ message: gameType + ' game ' + gameId + ' has been deleted.' });
             } else {
