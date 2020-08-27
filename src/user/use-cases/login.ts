@@ -22,7 +22,7 @@ const login: RequestHandler = async (req, res, next) => {
         if (!isCorrectPassword) {
             throw new CustomError('Password is incorrect.', 401);
         }
-        const jwtToken = jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET as string);
+        const jwtToken = jwt.sign({ userId: user._id, userName: user.name }, process.env.TOKEN_SECRET as string);
         res.status(200).json({ _id: user._id, name: user.name, email: user.email, token: jwtToken });
     }
     catch (err) {

@@ -24,7 +24,7 @@ router.get('/:userId/password-reset/:resetCode', (req, res, next) => { }); /// r
 // routes that require authentication
 router.get('/deactivate', authenticationVerification, userController.deactivate);
 
-router.get('/delete_account', authenticationVerification, userController.deletePermanently);
+router.get('/delete-account', authenticationVerification, userController.deletePermanently);
 
 router.put('/update-password', updatedPasswordValidation, userController.updatePassword);
 
