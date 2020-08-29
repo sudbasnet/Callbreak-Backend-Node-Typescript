@@ -18,7 +18,7 @@ const start: RequestHandler = async (req, res, next) => {
         }
 
         const isValidPlayer = game.players.map(x => x.playerId).includes(userId);
-        console.log(game.status);
+
         if (isValidPlayer && game.status === gameStatus.WAITING) {
             let bots: UserSchema[] = [];
             if (game.players.length < 4) {
@@ -50,7 +50,7 @@ const start: RequestHandler = async (req, res, next) => {
             game.global.nextTurn = userId;
 
             game.status = gameStatus.DEALT;
-            game.end = new Date();
+            game.global.end = new Date();
 
             const savedGame = await game.save();
             res.status(200).json(savedGame);

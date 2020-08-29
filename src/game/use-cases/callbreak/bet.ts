@@ -47,11 +47,11 @@ const bet: RequestHandler = async (req, res, next) => {
             const ind = game.global.bets.findIndex(x => x.playerId === userId);
             game.global.bets[ind].bet = bet;
 
-            if (game.playersReady === 3) {
-                game.status = gameStatus.ON;
-            } else {
-                game.playersReady += 1;
-            }
+            // if (game.playersReady === 3) {
+            //     game.status = gameStatus.ON;
+            // } else {
+            //     game.playersReady += 1;
+            // }
 
             const savedGame = await game.save();
 
