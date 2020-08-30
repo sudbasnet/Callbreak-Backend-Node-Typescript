@@ -1,4 +1,4 @@
-import Game, { GameSchema } from '../game.model';
+import Game, { GameSchema, gameStatus } from '../game.model';
 import { RequestHandler } from 'express';
 import User from '../../user/user.model';
 import CustomError from '../../_helpers/custom-error';
@@ -13,7 +13,7 @@ const gameData: RequestHandler = async (req, res, next) => {
         }
 
         let incompleteGame: GameSchema;
-        const incompleteGames = (await Game.find()).filter(g => g.players.map(p => p.playerId).includes(userId));
+        const incompleteGames = (await Game.find({ status: { $ne: gameStatus.COMPLETE } })).filter(g => g.players.map(p => p.playerId).includes(userId));
         if (incompleteGames.length > 0) {
             incompleteGame = incompleteGames[0];
             const currentPlayer = incompleteGame.players.filter(p => String(p.playerId) === String(userId))[0];
