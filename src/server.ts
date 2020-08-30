@@ -20,7 +20,6 @@ dotenv.config();
 
 // Middlewares
 app.use(express.json());
-app.use(errorHandler);
 app.use(cors({ origin: process.env.FRONTEND as string }));
 
 // Routes
@@ -29,6 +28,8 @@ app.use('/game', verifyAuthentication, gameRoutes);
 app.get('/', (req, res, next) => {
     res.send({ message: 'Default route' });
 });
+
+app.use(errorHandler);
 
 // Database Connection
 const DB_CONNECTION = process.env.DB_CONNECTION as string;
