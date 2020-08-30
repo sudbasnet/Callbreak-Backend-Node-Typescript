@@ -43,7 +43,7 @@ const bet: RequestHandler = async (req, res, next) => {
             throw new CustomError('Bet needs to be between 1 and 13', 500);
         }
 
-        if (game.status === gameStatus.DEALT) {
+        if (game.status === gameStatus.ACTIVE) {
             const ind = game.global.bets.findIndex(x => x.playerId === userId);
             game.global.bets[ind].bet = bet;
 

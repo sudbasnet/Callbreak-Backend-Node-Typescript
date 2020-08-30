@@ -10,7 +10,7 @@ const cancel: RequestHandler = async (req, res, next) => {
     try {
         const game = await Game.findById(gameId);
 
-        if (game && game.status != gameStatus.ON && userId) {
+        if (game && game.status != gameStatus.ACTIVE && userId) {
             // delete game if creator cancels
             if (String(game.createdBy) === String(userId)) { // use javascript String function, nothing else worked
                 await Game.deleteOne({ _id: gameId });

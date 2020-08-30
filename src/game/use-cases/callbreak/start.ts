@@ -3,6 +3,7 @@ import User, { UserSchema } from '../../../user/user.model';
 import Deck from '../../../_entities/Deck';
 import CustomError from '../../../_helpers/custom-error';
 import { RequestHandler } from 'express';
+import { readSync } from 'fs';
 
 const start: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -25,7 +26,15 @@ const start: RequestHandler = async (req, res, next) => {
                 bots = await User.find({ role: 'bot' });
             }
             while (game.players.length < 4) {
-                game.players.push({ playerId: bots[3 - game.players.length]._id, playerName: bots[3 - game.players.length].name });
+                game.global.playerList.push({
+                    playerId: bots[3 - game.players.length]._id,
+                    playerName: bots[3 - game.players.length].name,
+                });
+                game.players.push({
+                    playerId: bots[3 - game.players.length]._id,
+                    cards: [],
+                    possibleMoves: []
+                });
             }
 
             for (let i = 0; i < 4; i++) {
@@ -49,11 +58,12 @@ const start: RequestHandler = async (req, res, next) => {
             game.global.playedRounds = [[]];
             game.global.nextTurn = userId;
 
-            game.status = gameStatus.DEALT;
+            game.status = gameStatus.ACTIVE;
             game.global.end = new Date();
 
             const savedGame = await game.save();
-            res.status(200).json(savedGame);
+            const currentPlayer = savedGame.players.filter(p => String(p.playerId) === String(userId))[0];
+            res.status(200).json({ _id: savedGame._id, global: savedGame.global, player: currentPlayer, status: savedGame.status, createdBy: savedGame.createdBy });
         } else {
             throw new CustomError('You cannot start this game.', 500);
         }

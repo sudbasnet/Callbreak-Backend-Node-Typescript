@@ -5,9 +5,8 @@ import { Card } from '../_entities/Deck';
 export const enum gameStatus {
     "WAITING" = "waiting",
     "JOINING" = "joining",
-    "DEALT" = "dealt",
-    "ON" = "on",
-    "COMPLETE" = "complete"
+    "ACTIVE" = "active",
+    "INACTIVE" = "inactive"
 };
 
 export interface GlobalData {
@@ -32,7 +31,7 @@ export interface GlobalData {
 
 export interface PlayerData {
     playerId: UserSchema['_id'];
-    playerName: string;
+    playerName?: string;
     cards?: Card[];
     possibleMoves?: Card[];
 };
@@ -108,8 +107,6 @@ const Game: Schema = new Schema({
         type:
             [{
                 playerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-                playerName: { type: String, required: true },
-                ready: { type: Boolean, default: false },
                 cards: {
                     type:
                         [{

@@ -15,10 +15,10 @@ const create: RequestHandler = async (req, res, next) => {
         }
 
         // if the player has already created a game, then return the existing game
-        const incompleteGame = await Game.findOne({ createdBy: userId, status: { $ne: gameStatus.COMPLETE } });
+        const incompleteGame = await Game.findOne({ createdBy: userId, status: { $ne: gameStatus.INACTIVE } });
         if (incompleteGame) {
             const currentPlayer = incompleteGame.players.filter(p => String(p.playerId) === String(userId))[0];
-            res.status(200).json({ _id: incompleteGame._id, global: incompleteGame.global, player: currentPlayer });
+            res.status(200).json({ _id: incompleteGame._id, global: incompleteGame.global, player: currentPlayer, status: incompleteGame.status, createdBy: incompleteGame.createdBy });
         } else {
             const game = new Game({
                 global: {
@@ -47,8 +47,6 @@ const create: RequestHandler = async (req, res, next) => {
                     [
                         {
                             playerId: userId,
-                            playerName: userName,
-                            ready: false,
                             cards: [],
                             possibleMoves: []
                         }
@@ -57,9 +55,8 @@ const create: RequestHandler = async (req, res, next) => {
                 createdBy: userId,
             });
             const savedGame = await game.save();
-            console.log(savedGame);
             const currentPlayer = savedGame.players.filter(p => String(p.playerId) === String(userId))[0];
-            res.status(200).json({ _id: savedGame._id, global: savedGame.global, player: currentPlayer });
+            res.status(200).json({ _id: savedGame._id, global: savedGame.global, player: currentPlayer, status: savedGame.status, createdBy: savedGame.createdBy });
         }
     } catch (err) {
         next(err);
