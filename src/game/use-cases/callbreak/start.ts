@@ -41,14 +41,14 @@ const start: RequestHandler = async (req, res, next) => {
                 game.players[i].cards = dealtCardsObject.dealt[i];
                 game.global.scores.push(
                     {
-                        round: 0,
+                        gameNumber: 0,
                         playerId: game.players[i].playerId,
                         score: 0
                     }
                 );
                 game.global.bets.push(
                     {
-                        round: 0,
+                        gameNumber: 0,
                         playerId: game.players[i].playerId,
                         bet: 0
                     }

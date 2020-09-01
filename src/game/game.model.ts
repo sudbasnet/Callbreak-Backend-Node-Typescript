@@ -14,10 +14,11 @@ export interface GlobalData {
     roundNumber: number;
     turnNumber: number;
     playerList: { playerId: UserSchema['_id'], playerName: string }[];
-    scores: { round: number, playerId: UserSchema['_id'], score: number }[];
-    bets: { round: number, playerId: UserSchema['_id'], bet: number }[];
+    scores: { gameNumber: number, playerId: UserSchema['_id'], score: number }[];
+    bets: { gameNumber: number, playerId: UserSchema['_id'], bet: number }[];
     ready: { player: UserSchema['_id'], ready: boolean };
-    playedRounds: { playerId: string, card: Card }[][];
+    playedRounds: { won: boolean, card: Card }[][];
+    cardsOnTable: Card[];
     currentTurn: UserSchema['_id'];
     nextTurn?: UserSchema['_id'];
     currentSuit?: string;
@@ -60,14 +61,14 @@ const Game: Schema = new Schema({
             scores: {
                 type: [{
                     playerId: { type: Schema.Types.ObjectId, ref: 'User' },
-                    round: { type: Number },
+                    gameNumber: { type: Number },
                     score: { type: Number }
                 }]
             },
             bets: {
                 type: [{
                     playerId: { type: Schema.Types.ObjectId, ref: 'User' },
-                    round: { type: Number },
+                    gameNumber: { type: Number },
                     bet: { type: Number }
                 }]
             },
@@ -81,8 +82,9 @@ const Game: Schema = new Schema({
             },
             playedRounds: {
                 type:
-                    [[{
-                        playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+                    [
+                        [{
+                        won: {type: Boolean} ,
                         card: {
                             type:
                             {
@@ -90,8 +92,10 @@ const Game: Schema = new Schema({
                                 value: String
                             }
                         }
-                    }]]
+                    }]
+                ]
             },
+            cardsOnTable: {type: [{type: Card}]},
             currentTurn: { type: Schema.Types.ObjectId, ref: 'User' },
             nextTurn: { type: Schema.Types.ObjectId, ref: 'User' },
             currentSuit: { type: String },

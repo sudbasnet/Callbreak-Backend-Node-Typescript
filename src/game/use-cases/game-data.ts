@@ -16,8 +16,9 @@ const gameData: RequestHandler = async (req, res, next) => {
         const incompleteGames = (await Game.find({ status: { $ne: gameStatus.INACTIVE } })).filter(g => g.players.map(p => p.playerId).includes(userId));
         if (incompleteGames.length > 0) {
             incompleteGame = incompleteGames[0];
+
             const currentPlayer = incompleteGame.players.filter(p => String(p.playerId) === String(userId))[0];
-            res.status(200).json({ _id: incompleteGame._id, global: incompleteGame.global, player: currentPlayer });
+            res.status(200).json({ _id: incompleteGame._id, global: incompleteGame.global, player: currentPlayer, status: incompleteGame.status, createdBy: incompleteGame.createdBy });
         } else {
             throw new CustomError('The current user has no pre-existing game', 404);
         }

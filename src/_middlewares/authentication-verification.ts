@@ -3,7 +3,6 @@ import { RequestHandler } from "express";
 import jwt from 'jsonwebtoken';
 
 import CustomError from '../_helpers/custom-error';
-import resetPassword from "../user/use-cases/reset-password";
 
 const verifyAuthentication: RequestHandler = (req, res, next) => {
     const authorizationHeader = req.get('Authorization');
