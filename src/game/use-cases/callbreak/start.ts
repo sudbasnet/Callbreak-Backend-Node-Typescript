@@ -37,6 +37,8 @@ const start: RequestHandler = async (req, res, next) => {
                 });
             }
 
+            game.markModified('global.playerList');
+
             for (let i = 0; i < 4; i++) {
                 game.players[i].cards = dealtCardsObject.dealt[i];
                 game.global.scores.push(
@@ -54,6 +56,9 @@ const start: RequestHandler = async (req, res, next) => {
                     }
                 );
             }
+
+            game.markModified('global.scores');
+            game.markModified('global.bets');
 
             game.global.playedRounds = [[]];
             game.global.nextTurn = userId;
