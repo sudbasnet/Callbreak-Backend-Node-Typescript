@@ -36,7 +36,7 @@ export class Card {
 };
 
 export default class Deck {
-    public static suites: suits[] = [suits.HEARTS, suits.SPADES, suits.DIAMONDS, suits.DIAMONDS];
+    public static suites: suits[] = [suits.HEARTS, suits.SPADES, suits.DIAMONDS, suits.CLUBS];
     public static cardValues: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', "ace", "king", "queen", "jack"];
 
     public static getFullDeck() {
