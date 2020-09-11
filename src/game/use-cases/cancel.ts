@@ -17,7 +17,7 @@ const cancel: RequestHandler = async (req, res, next) => {
                 res.status(201).json({ message: gameType + ' game ' + gameId + ' has been deleted.' });
             } else {
                 // delete player if not creator
-                game.players = game.players.filter(p => String(p.playerId) != String(userId));
+                game.players = game.players.filter(p => String(p.id) != String(userId));
                 await game.save();
                 res.status(201).json({ message: 'player ' + userId + ' has left the game.' });
             }

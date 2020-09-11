@@ -2,6 +2,7 @@ import Game, { gameStatus } from '../game.model';
 import CustomError from '../../_helpers/custom-error';
 import { RequestHandler } from 'express';
 import socketIO from '../../socket';
+import gameResponse from '../../_helpers/game-response';
 
 /*
 POST Request
@@ -26,7 +27,11 @@ log: {}
 const bet: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
     const gameId = req.params.gameId;
-    const bet = req.body.bet;
+    const bet: number = req.body.bet;
+
+    if (!userId) {
+        throw new CustomError('The user does not exist.', 404);
+    }
 
     try {
         const game = await Game.findById(gameId);
@@ -35,7 +40,7 @@ const bet: RequestHandler = async (req, res, next) => {
             throw new CustomError('The game does not exist.', 404);
         }
 
-        const isValidPlayer = game.players.map(x => x.playerId).includes(userId);
+        const isValidPlayer = game.players.map(x => x.id).includes(userId);
         if (!isValidPlayer) {
             throw new CustomError('Incorrect Game', 404);
         }
@@ -45,13 +50,18 @@ const bet: RequestHandler = async (req, res, next) => {
         }
 
         if (game.status === gameStatus.ACTIVE) {
-            const ind = game.global.bets.findIndex(x => String(x.playerId) === String(userId));
-            game.global.bets[ind].bet = bet;
+            const ind = game.global.playerList.findIndex(x => String(x.id) === String(userId));
+
+            game.global.playerList[ind].bet = bet;
+            game.markModified('global.playerList');
+
+            game.global.playerList[ind].betPlaced = true;
+            game.markModified('global.playerList');
 
             const savedGame = await game.save();
 
             socketIO.getIO().emit('moves', { bet: 'bets have been set' });
-            res.status(200).json({ message: "bet has been saved." });
+            res.status(200).json(gameResponse(userId, savedGame));
         } else {
             throw new CustomError('You cannot start this game.', 500);
         }

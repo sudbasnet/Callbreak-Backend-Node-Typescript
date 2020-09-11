@@ -19,7 +19,7 @@ const validMoves: RequestHandler = async (req, res, next) => {
             next();
         }
 
-        const currentPlayerIndex = game.players.findIndex(x => x.playerId === userId);
+        const currentPlayerIndex = game.players.findIndex(x => x.id === userId);
         let player = game.players[currentPlayerIndex];
 
         if (!player.cards) {

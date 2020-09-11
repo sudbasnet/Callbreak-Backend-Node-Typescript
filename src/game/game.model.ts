@@ -41,8 +41,8 @@ export interface GlobalData {
 };
 
 export interface PlayerData {
-    playerId: UserSchema['_id'];
-    playerName?: string;
+    id: UserSchema['_id'];
+    name?: string;
     cards?: Card[];
     possibleMoves?: Card[];
 };
@@ -63,8 +63,12 @@ const Game: Schema = new Schema({
             playerList: {
                 type: [
                     {
-                        playerId: { type: Schema.Types.ObjectId, ref: 'User' },
-                        playerName: { type: String }
+                        id: { type: Schema.Types.ObjectId, ref: 'User' },
+                        name: { type: String },
+                        bet: { type: Number },
+                        score: { type: Number },
+                        totalScore: { type: Number },
+                        betPlaced: { type: Boolean, default: false },
                     }
                 ]
             },
@@ -74,20 +78,6 @@ const Game: Schema = new Schema({
                     gameNumber: { type: Number },
                     score: { type: Number }
                 }]
-            },
-            bets: {
-                type: [{
-                    playerId: { type: Schema.Types.ObjectId, ref: 'User' },
-                    bet: { type: Number }
-                }]
-            },
-            ready: {
-                type: [
-                    {
-                        playerId: { type: Schema.Types.ObjectId, ref: 'User' },
-                        ready: { type: Boolean, default: false }
-                    }
-                ]
             },
             playedRounds: {
                 type:
@@ -119,7 +109,8 @@ const Game: Schema = new Schema({
     players: {
         type:
             [{
-                playerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+                id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+                name: { type: String, required: false },
                 cards: {
                     type:
                         [{

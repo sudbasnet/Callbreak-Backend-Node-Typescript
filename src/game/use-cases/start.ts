@@ -3,13 +3,17 @@ import User, { UserSchema } from '../../user/user.model';
 import Deck from '../../_entities/Deck';
 import CustomError from '../../_helpers/custom-error';
 import { RequestHandler } from 'express';
-import { readSync } from 'fs';
+import gameResponse from '../../_helpers/game-response';
 
 const start: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
     const gameId = req.params.gameId;
 
     const dealtCardsObject = Deck.dealCards(13, 4);
+
+    if (!userId) {
+        throw new CustomError('The user does not exist.', 404);
+    }
 
     try {
         const game = await Game.findById(gameId);
@@ -18,7 +22,7 @@ const start: RequestHandler = async (req, res, next) => {
             throw new CustomError('The game does not exist.', 404);
         }
 
-        const isValidPlayer = game.players.map(x => x.playerId).includes(userId);
+        const isValidPlayer = game.players.map(x => x.id).includes(userId);
 
         if (isValidPlayer && game.status === gameStatus.WAITING) {
             let bots: UserSchema[] = [];
@@ -27,11 +31,15 @@ const start: RequestHandler = async (req, res, next) => {
             }
             while (game.players.length < 4) {
                 game.global.playerList.push({
-                    playerId: bots[3 - game.players.length]._id,
-                    playerName: bots[3 - game.players.length].name,
+                    id: bots[3 - game.players.length]._id,
+                    name: bots[3 - game.players.length].name,
+                    bet: 0,
+                    score: 0,
+                    totalScore: 0,
+                    betPlaced: false
                 });
                 game.players.push({
-                    playerId: bots[3 - game.players.length]._id,
+                    id: bots[3 - game.players.length]._id,
                     cards: [],
                     possibleMoves: []
                 });
@@ -44,15 +52,8 @@ const start: RequestHandler = async (req, res, next) => {
                 game.global.scores.push(
                     {
                         gameNumber: 0,
-                        playerId: game.players[i].playerId,
+                        playerId: game.players[i].id,
                         score: 0
-                    }
-                );
-                game.global.bets.push(
-                    {
-                        gameNumber: 0,
-                        playerId: game.players[i].playerId,
-                        bet: 0
                     }
                 );
             }
@@ -61,14 +62,12 @@ const start: RequestHandler = async (req, res, next) => {
             game.markModified('global.bets');
 
             game.global.playedRounds = [[]];
-            game.global.nextTurn = userId;
 
             game.status = gameStatus.ACTIVE;
             game.global.end = new Date();
 
             const savedGame = await game.save();
-            const currentPlayer = savedGame.players.filter(p => String(p.playerId) === String(userId))[0];
-            res.status(200).json({ _id: savedGame._id, global: savedGame.global, player: currentPlayer, status: savedGame.status, createdBy: savedGame.createdBy });
+            res.status(200).json(gameResponse(userId, savedGame));
         } else {
             throw new CustomError('You cannot start this game.', 500);
         }
