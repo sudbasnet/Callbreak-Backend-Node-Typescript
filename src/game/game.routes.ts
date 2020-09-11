@@ -6,6 +6,8 @@ const router = Router();
 // CALLBREAK specific routes
 router.get('/callbreak/:gameId/start', gameController.start); // success method 200
 
+router.post('/:gameType/:gameId/bet', gameController.bet);
+
 // Other Routes
 router.get('/:gameType/new', gameController.create); // returns a gameId
 

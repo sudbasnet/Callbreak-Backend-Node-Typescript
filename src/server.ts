@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
-import socketIO from 'socket.io';
+import socketIO from './socket';
 
 //Import Middlewares
 import errorHandler from './_middlewares/error-handler';
@@ -46,7 +46,7 @@ const PORT: number = parseInt(process.env.PORT as string);
 const server = app.listen(PORT, () => { console.log("Server is running.") });
 
 // Socket.IO
-const io = socketIO(server);
+const io = socketIO.init(server);
 io.on('connection', socket => {
     console.log('Websockets connected.');
 });

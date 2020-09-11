@@ -1,7 +1,7 @@
-import Game, { gameStatus } from '../../game.model';
-import User, { UserSchema } from '../../../user/user.model';
-import Deck from '../../../_entities/Deck';
-import CustomError from '../../../_helpers/custom-error';
+import Game, { gameStatus } from '../game.model';
+import User, { UserSchema } from '../../user/user.model';
+import Deck from '../../_entities/Deck';
+import CustomError from '../../_helpers/custom-error';
 import { RequestHandler } from 'express';
 import { readSync } from 'fs';
 

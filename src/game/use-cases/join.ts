@@ -5,6 +5,7 @@ import CustomError from '../../_helpers/custom-error';
 
 const join: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
+    const userName = req.userName;
     const gameId = req.params.gameId;
 
     try {
@@ -27,7 +28,7 @@ const join: RequestHandler = async (req, res, next) => {
             game.players.push(
                 {
                     playerId: userId,
-                    playerName: "Dummy"
+                    playerName: userName
                 });
             const savedGame = await game.save();
             res.status(200).json(savedGame);

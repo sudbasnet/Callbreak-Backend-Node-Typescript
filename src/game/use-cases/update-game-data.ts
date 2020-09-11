@@ -30,9 +30,9 @@ newTurnNumber % 4 is the player's index who is the new nextPlayer
 if turnnumber === 12, means the game is over
 */
 
-import Game from '../../game.model';
-import { Card } from '../../../_entities/Deck';
-import CustomError from '../../../_helpers/custom-error';
+import Game from '../game.model';
+import { Card } from '../../_entities/Deck';
+import CustomError from '../../_helpers/custom-error';
 import { RequestHandler } from 'express';
 
 const updateGameDb: RequestHandler = async (req, res, next) => {

@@ -1,6 +1,6 @@
-import Game from '../../game.model';
-import { Card } from '../../../_entities/Deck';
-import CustomError from '../../../_helpers/custom-error';
+import Game from '../game.model';
+import { Card } from '../../_entities/Deck';
+import CustomError from '../../_helpers/custom-error';
 import { RequestHandler } from 'express';
 
 const validMoves: RequestHandler = async (req, res, next) => {

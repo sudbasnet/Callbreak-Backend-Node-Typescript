@@ -1,6 +1,7 @@
-import Game, { gameStatus } from '../../game.model';
-import CustomError from '../../../_helpers/custom-error';
+import Game, { gameStatus } from '../game.model';
+import CustomError from '../../_helpers/custom-error';
 import { RequestHandler } from 'express';
+import socketIO from '../../socket';
 
 /*
 POST Request
@@ -44,17 +45,12 @@ const bet: RequestHandler = async (req, res, next) => {
         }
 
         if (game.status === gameStatus.ACTIVE) {
-            const ind = game.global.bets.findIndex(x => x.playerId === userId);
+            const ind = game.global.bets.findIndex(x => String(x.playerId) === String(userId));
             game.global.bets[ind].bet = bet;
-
-            // if (game.playersReady === 3) {
-            //     game.status = gameStatus.ON;
-            // } else {
-            //     game.playersReady += 1;
-            // }
 
             const savedGame = await game.save();
 
+            socketIO.getIO().emit('moves', { bet: 'bets have been set' });
             res.status(200).json({ message: "bet has been saved." });
         } else {
             throw new CustomError('You cannot start this game.', 500);
