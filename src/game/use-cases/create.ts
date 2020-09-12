@@ -3,6 +3,7 @@ import { RequestHandler } from 'express';
 import User from '../../user/user.model';
 import CustomError from '../../_helpers/custom-error';
 import gameResponse from '../../_helpers/game-response';
+import socketIO from '../../socket';
 
 const create: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -22,45 +23,55 @@ const create: RequestHandler = async (req, res, next) => {
         // if the player has already created a game, then return the existing game
         const incompleteGame = await Game.findOne({ createdBy: userId, status: { $ne: gameStatus.INACTIVE } });
         if (incompleteGame) {
-            const currentPlayer = incompleteGame.players.filter(p => String(p.id) === String(userId))[0];
-            res.status(200).json({ _id: incompleteGame._id, global: incompleteGame.global, player: currentPlayer, status: incompleteGame.status, createdBy: incompleteGame.createdBy });
+            res.status(200).json(gameResponse(userId, incompleteGame));
         } else {
             const game = new Game({
-                global: {
-                    gameNumber: 1,
-                    roundNumber: 1,
-                    turnNumber: 1,
-                    playerList: [
-                        {
-                            id: userId,
-                            name: userName,
-                            bet: 0,
-                            score: 0,
-                            totalScore: 0,
-                            betPlaced: false
-                        }
-                    ],
-                    scores: [],
-                    playedRounds: [],
-                    currentTurn: userId,
-                    currentSuit: null,
-                    overriddenBySpades: false,
+                status: gameStatus.WAITING,
+                createdBy: userId,
 
-                    gameType: gameType,
-                    start: new Date()
-                },
+                gameNumber: 1,
+                roundNumber: 1,
+
+                playerList: [
+                    {
+                        id: userId,
+                        name: userName,
+                        bet: 0,
+                        bot: false,
+                        score: 0,
+                        totalScore: 0,
+                        betPlaced: false
+                    }
+                ],
+                gameScores: [{ gameNumber: 1, playerId: userId, score: 0 }],
+                playedRounds: [],
+                cardsOnTable: [],
+
+                currentTurn: userId,
+                currentSuit: null,
+                currentWinningCard: null,
+                overriddenBySpade: false,
+
+                gameType: gameType,
+                start: new Date(),
+
                 players:
                     [
                         {
                             id: userId,
+                            name: req.userName,
+                            bot: false,
                             cards: [],
                             possibleMoves: []
                         }
                     ],
-                status: gameStatus.WAITING,
-                createdBy: userId,
+
             });
             const savedGame = await game.save();
+
+            socketIO.getIO().on('connection', socket => {
+                socket.join(savedGame._id);
+            });
 
             res.status(200).json(gameResponse(userId, savedGame));
         }
@@ -68,5 +79,11 @@ const create: RequestHandler = async (req, res, next) => {
         next(err);
     }
 };
+
+// io.on('connection', socket => {
+//     console.log('Websockets connected.');
+// });
+
+
 
 export default create;

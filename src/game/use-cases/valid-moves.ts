@@ -2,12 +2,16 @@ import Game from '../game.model';
 import { Card } from '../../_entities/Deck';
 import CustomError from '../../_helpers/custom-error';
 import { RequestHandler } from 'express';
+import gameResponse from '../../_helpers/game-response';
 
 const validMoves: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
     const gameId = req.params.gameId;
-    const currentPlayer = req.body.global.nextPlayer;
+    const currentPlayer = req.body.nextPlayer;
 
+    if (!userId) {
+        throw new CustomError('The user does not exist.', 404);
+    }
     try {
         const game = await Game.findById(gameId);
 
@@ -28,10 +32,10 @@ const validMoves: RequestHandler = async (req, res, next) => {
 
         let possibleMoves: Card[] = player.cards;
 
-        if (game.global.currentSuit && game.global.currentWinningCard) {
-            const currentSuit = game.global.currentSuit;
-            const currentWinningCard = game.global.currentWinningCard;
-            const overriddenBySpade = game.global.overriddenBySpade;
+        if (game.currentSuit && game.currentWinningCard) {
+            const currentSuit = game.currentSuit;
+            const currentWinningCard = game.currentWinningCard;
+            const overriddenBySpade = game.overriddenBySpade;
 
             if (!overriddenBySpade) {
                 possibleMoves = player.cards.filter(x => x.suit === currentWinningCard.suit && x.numericValue() > currentWinningCard.numericValue());
@@ -65,7 +69,7 @@ const validMoves: RequestHandler = async (req, res, next) => {
         game.players[currentPlayerIndex].possibleMoves = possibleMoves;
         const savedGame = await game.save();
 
-        res.status(200).json({ global: game.global, player: game.players[currentPlayerIndex], status: game.schema });
+        res.status(200).json(gameResponse(userId, savedGame));
     } catch (err) {
         next(err);
     }

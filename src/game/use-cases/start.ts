@@ -30,26 +30,27 @@ const start: RequestHandler = async (req, res, next) => {
                 bots = await User.find({ role: 'bot' });
             }
             while (game.players.length < 4) {
-                game.global.playerList.push({
+                game.playerList.push({
                     id: bots[3 - game.players.length]._id,
                     name: bots[3 - game.players.length].name,
                     bet: 0,
+                    bot: true,
                     score: 0,
                     totalScore: 0,
                     betPlaced: false
                 });
                 game.players.push({
                     id: bots[3 - game.players.length]._id,
+                    name: bots[3 - game.players.length].name,
+                    bot: true,
                     cards: [],
                     possibleMoves: []
                 });
             }
 
-            game.markModified('global.playerList');
-
             for (let i = 0; i < 4; i++) {
                 game.players[i].cards = dealtCardsObject.dealt[i];
-                game.global.scores.push(
+                game.gameScores.push(
                     {
                         gameNumber: 0,
                         playerId: game.players[i].id,
@@ -58,13 +59,10 @@ const start: RequestHandler = async (req, res, next) => {
                 );
             }
 
-            game.markModified('global.scores');
-            game.markModified('global.bets');
-
-            game.global.playedRounds = [[]];
+            game.playedRounds = [[]];
 
             game.status = gameStatus.ACTIVE;
-            game.global.end = new Date();
+            game.end = new Date();
 
             const savedGame = await game.save();
             res.status(200).json(gameResponse(userId, savedGame));

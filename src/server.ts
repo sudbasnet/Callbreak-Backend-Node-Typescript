@@ -47,6 +47,3 @@ const server = app.listen(PORT, () => { console.log("Server is running.") });
 
 // Socket.IO
 const io = socketIO.init(server);
-io.on('connection', socket => {
-    console.log('Websockets connected.');
-});

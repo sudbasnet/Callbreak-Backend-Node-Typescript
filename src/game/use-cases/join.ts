@@ -9,7 +9,7 @@ const join: RequestHandler = async (req, res, next) => {
     const userName = req.userName;
     const gameId = req.params.gameId;
 
-    if (!userId) {
+    if (!userId || !userName) {
         throw new CustomError('The user does not exist.', 404);
     }
 
@@ -24,7 +24,7 @@ const join: RequestHandler = async (req, res, next) => {
             throw new CustomError('Cannot find user.', 404);
         }
 
-        const playerAlreadyJoined = game.players.map(x => x.id).includes(userId);
+        const playerAlreadyJoined = game.players.map(x => x.id).includes(userId) || game.playerList.map(x => x.id).includes(userId);
 
         if (playerAlreadyJoined) {
             throw new CustomError('Cannot join same game again.', 500);
@@ -33,8 +33,23 @@ const join: RequestHandler = async (req, res, next) => {
             game.players.push(
                 {
                     id: userId,
-                    name: userName
+                    name: userName,
+                    bot: false,
+                    cards: [],
+                    possibleMoves: []
                 });
+
+            game.playerList.push(
+                {
+                    id: userId,
+                    name: userName,
+                    bet: 0,
+                    bot: false,
+                    score: 0,
+                    totalScore: 0,
+                    betPlaced: false
+                }
+            );
             const savedGame = await game.save();
             res.status(200).json(gameResponse(userId, savedGame));
         }

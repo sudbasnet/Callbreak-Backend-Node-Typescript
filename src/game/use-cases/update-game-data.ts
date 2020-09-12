@@ -34,6 +34,7 @@ import Game from '../game.model';
 import { Card } from '../../_entities/Deck';
 import CustomError from '../../_helpers/custom-error';
 import { RequestHandler } from 'express';
+import gameResponse from '../../_helpers/game-response';
 
 const updateGameDb: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -42,7 +43,11 @@ const updateGameDb: RequestHandler = async (req, res, next) => {
     const value: string = req.body.card.value;
     const playedCard = new Card(suit, value);
 
-    const currentPlayer = req.body.global.nextPlayer;
+    if (!userId) {
+        throw new CustomError('The user does not exist.', 404);
+    }
+
+    const currentPlayer = req.body.nextPlayer;
 
     try {
         const game = await Game.findById(gameId);
@@ -58,12 +63,12 @@ const updateGameDb: RequestHandler = async (req, res, next) => {
         const currentPlayerIndex = game.players.findIndex(x => x.id === userId);
         let player = game.players[currentPlayerIndex];
 
-        if (game.global.currentSuit && game.global.currentWinningCard && player.cards) {
+        if (game.currentSuit && game.currentWinningCard && player.cards) {
             let possibleMoves: Card[] = player.cards;
 
-            const currentSuit = game.global.currentSuit;
-            const currentWinningCard = game.global.currentWinningCard;
-            const overriddenBySpade = game.global.overriddenBySpade;
+            const currentSuit = game.currentSuit;
+            const currentWinningCard = game.currentWinningCard;
+            const overriddenBySpade = game.overriddenBySpade;
 
             if (!overriddenBySpade) {
                 possibleMoves = player.cards.filter(x => x.suit === currentWinningCard.suit && x.value > currentWinningCard.value);
@@ -96,8 +101,7 @@ const updateGameDb: RequestHandler = async (req, res, next) => {
 
             game.players[currentPlayerIndex].possibleMoves = possibleMoves;
             const savedGame = await game.save();
-
-            res.status(200).json({ global: game.global, player: game.players[currentPlayerIndex], status: game.status });
+            res.status(200).json(gameResponse(userId, savedGame));
         } else {
             throw new CustomError('Invalid Request', 500);
         }

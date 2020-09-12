@@ -4,26 +4,6 @@ import { RequestHandler } from 'express';
 import socketIO from '../../socket';
 import gameResponse from '../../_helpers/game-response';
 
-/*
-POST Request
-============
-userId --> comes from the req, jwt token
-gameType --> comes from the params as well
-gameId --> comes from the req.params
-bet --> comes from the body of the POST request
-
-Checks Required (other than typescript specific):
-================================================
-bet cannot be more than 13 and less than 1
-player is valid, ie; player exits in the game.players 
-
-Return??
-=======
-global: {}
-player: {}
-log: {}
-
-*/
 const bet: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
     const gameId = req.params.gameId;
@@ -37,7 +17,7 @@ const bet: RequestHandler = async (req, res, next) => {
         const game = await Game.findById(gameId);
 
         if (!game) {
-            throw new CustomError('The game does not exist.', 404);
+            throw new CustomError('The game does not exist!', 404);
         }
 
         const isValidPlayer = game.players.map(x => x.id).includes(userId);
@@ -49,21 +29,29 @@ const bet: RequestHandler = async (req, res, next) => {
             throw new CustomError('Bet needs to be between 1 and 13', 500);
         }
 
+        if (String(game.currentTurn) != String(userId)) {
+            throw new CustomError('Not your turn to play!', 500);
+        }
+
         if (game.status === gameStatus.ACTIVE) {
-            const ind = game.global.playerList.findIndex(x => String(x.id) === String(userId));
+            let i = game.playerList.findIndex(x => String(x.id) === String(userId));
 
-            game.global.playerList[ind].bet = bet;
-            game.markModified('global.playerList');
+            if (game.playerList[i].betPlaced) {
+                throw new CustomError('Bet cannot be changed once placed!', 500);
+            }
 
-            game.global.playerList[ind].betPlaced = true;
-            game.markModified('global.playerList');
+            game.playerList[i].bet = bet;
+            game.playerList[i].betPlaced = true;
+            // change the current turn to the next player
+            game.currentTurn = game.playerList[(i + 1) % 4].id;
 
             const savedGame = await game.save();
 
-            socketIO.getIO().emit('moves', { bet: 'bets have been set' });
+            socketIO.getIO().emit('bet', { bet: 'bets updated, refresh data' });
+
             res.status(200).json(gameResponse(userId, savedGame));
         } else {
-            throw new CustomError('You cannot start this game.', 500);
+            throw new CustomError('This game is no longer active!', 500);
         }
     } catch (err) {
         next(err);

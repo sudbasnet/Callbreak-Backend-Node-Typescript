@@ -1,26 +1,64 @@
 // allows to cancel a game that has not been started
 import Game, { gameStatus } from '../game.model';
+import User, { UserSchema } from '../../user/user.model';
 import { RequestHandler } from 'express';
+import CustomError from '../../_helpers/custom-error';
 
 const cancel: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
+    const userName = req.userName;
     const gameId = req.body.gameId;
     const gameType = req.params.gameType;
 
     try {
         const game = await Game.findById(gameId);
 
-        if (game && game.status != gameStatus.ACTIVE && userId) {
-            // delete game if creator cancels
-            if (String(game.createdBy) === String(userId)) { // use javascript String function, nothing else worked
-                await Game.deleteOne({ _id: gameId });
-                res.status(201).json({ message: gameType + ' game ' + gameId + ' has been deleted.' });
-            } else {
-                // delete player if not creator
-                game.players = game.players.filter(p => String(p.id) != String(userId));
+        if (!game) {
+            throw new CustomError('Game does not exist!', 404);
+        }
+
+        if (!userId || !userName) {
+            throw new CustomError('User does not exist!', 404);
+        }
+
+        const isValidPlayer = game.players.map(x => x.id).includes(userId);
+        if (!isValidPlayer) {
+            throw new CustomError('User does not have any game!', 404);
+        }
+
+        // delete game if creator cancels
+        if (String(game.createdBy) === userId) { // use javascript String function, nothing else worked
+            await Game.deleteOne({ _id: gameId });
+            res.status(201).json({ message: gameType + ' game ' + gameId + ' has been deleted.' });
+        } else {
+            // delete player if not creator
+            if (game.status === gameStatus.ACTIVE) {
+                const i = game.players.findIndex(p => String(p.id) === String(userId));
+                const j = game.playerList.findIndex(p => String(p.id) === String(userId));
+
+                let bots = await User.find({ role: 'bot' });
+
+                for (const bot of bots) {
+                    if (!game.players.map(x => x.id).includes(bot._id)) {
+
+                        game.players[i].id = bot._id;
+                        game.players[i].name = bot.name;
+                        game.players[i].bot = true;
+
+                        game.playerList[j].id = bot._id;
+                        game.playerList[j].name = bot.name;
+                        game.playerList[j].bot = true;
+
+                        break;
+                    }
+                }
                 await game.save();
-                res.status(201).json({ message: 'player ' + userId + ' has left the game.' });
+            } else {
+                game.players = game.players.filter(p => String(p.id) != userId);
+                game.playerList = game.playerList.filter(p => String(p.id) != userId);
+                await game.save();
             }
+            res.status(201).json({ message: userName + ' has left the game.' });
         }
     } catch (err) {
         next(err);

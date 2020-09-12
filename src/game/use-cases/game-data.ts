@@ -2,10 +2,13 @@ import Game, { GameSchema, gameStatus } from '../game.model';
 import { RequestHandler } from 'express';
 import User from '../../user/user.model';
 import CustomError from '../../_helpers/custom-error';
+import gameResponse from '../../_helpers/game-response';
 
 const gameData: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
-
+    if (!userId) {
+        throw new CustomError('The user does not exist.', 404);
+    }
     try {
         const user = await User.findById(userId);
         if (!user) {
@@ -13,12 +16,11 @@ const gameData: RequestHandler = async (req, res, next) => {
         }
 
         let incompleteGame: GameSchema;
-        const incompleteGames = (await Game.find({ status: { $ne: gameStatus.INACTIVE } })).filter(g => g.players.map(p => p.id).includes(userId));
+        const activeGames = await Game.find({ status: { $ne: gameStatus.INACTIVE } });
+        const incompleteGames = activeGames.filter(g => g.players.map(p => String(p.id)).includes(userId));
         if (incompleteGames.length > 0) {
             incompleteGame = incompleteGames[0];
-
-            const currentPlayer = incompleteGame.players.filter(p => String(p.id) === String(userId))[0];
-            res.status(200).json({ _id: incompleteGame._id, global: incompleteGame.global, player: currentPlayer, status: incompleteGame.status, createdBy: incompleteGame.createdBy });
+            res.status(200).json(gameResponse(userId, incompleteGame));
         } else {
             throw new CustomError('The current user has no pre-existing game', 404);
         }
