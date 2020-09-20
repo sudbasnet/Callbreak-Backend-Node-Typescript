@@ -63,6 +63,7 @@ const start: RequestHandler = async (req, res, next) => {
 
             game.status = gameStatus.ACTIVE;
             game.end = new Date();
+            game.currentTurn = game.playerList[1].id;
 
             const savedGame = await game.save();
             res.status(200).json(gameResponse(userId, savedGame));

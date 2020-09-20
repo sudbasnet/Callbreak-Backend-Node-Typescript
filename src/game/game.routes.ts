@@ -8,6 +8,8 @@ router.get('/callbreak/:gameId/start', gameController.start); // success method 
 
 router.post('/:gameType/:gameId/bet', gameController.bet);
 
+router.get('/callbreak/:gameId/bot-bet/:botId', gameController.botBet); // success method 200
+
 // Other Routes
 router.get('/:gameType/new', gameController.create); // returns a gameId
 

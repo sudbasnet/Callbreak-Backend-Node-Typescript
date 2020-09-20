@@ -62,6 +62,6 @@ io.on('connect', socket => {
 
     socket.on('EXIT_GAME', ({ room }) => {
         socket.to(room).emit('GAME_EXITED')
-        socket.leave(room)
+        // socket.leave(room)
     })
 })

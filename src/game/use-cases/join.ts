@@ -25,9 +25,10 @@ const join: RequestHandler = async (req, res, next) => {
         }
 
         const playerAlreadyJoined = game.players.map(x => x.id).includes(userId) || game.playerList.map(x => x.id).includes(userId);
+        const gameIsFull = game.players.length === 4
 
-        if (playerAlreadyJoined) {
-            throw new CustomError('Cannot join same game again.', 500);
+        if (playerAlreadyJoined || gameIsFull) {
+            throw new CustomError('Cannot join game!', 500);
         }
         if (game.players.length <= 4) {
             game.players.push(

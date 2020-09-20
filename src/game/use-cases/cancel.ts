@@ -33,21 +33,25 @@ const cancel: RequestHandler = async (req, res, next) => {
         } else {
             // delete player if not creator
             if (game.status === gameStatus.ACTIVE) {
-                const i = game.players.findIndex(p => String(p.id) === String(userId));
-                const j = game.playerList.findIndex(p => String(p.id) === String(userId));
+                const playersIndex = game.players.findIndex(p => String(p.id) === String(userId));
+                const playerListIndex = game.playerList.findIndex(p => String(p.id) === String(userId));
 
                 let bots = await User.find({ role: 'bot' });
 
                 for (const bot of bots) {
                     if (!game.players.map(x => x.id).includes(bot._id)) {
 
-                        game.players[i].id = bot._id;
-                        game.players[i].name = bot.name;
-                        game.players[i].bot = true;
+                        game.players[playersIndex].id = bot._id
+                        game.players[playersIndex].name = bot.name
+                        game.players[playersIndex].bot = true
 
-                        game.playerList[j].id = bot._id;
-                        game.playerList[j].name = bot.name;
-                        game.playerList[j].bot = true;
+                        game.playerList[playerListIndex].id = bot._id
+                        game.playerList[playerListIndex].name = bot.name
+                        game.playerList[playerListIndex].bot = true
+
+                        if (String(game.currentTurn) === userId) {
+                            game.currentTurn = bot._id
+                        }
 
                         break;
                     }

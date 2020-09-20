@@ -46,7 +46,7 @@ const create: RequestHandler = async (req, res, next) => {
                 playedRounds: [],
                 cardsOnTable: [],
 
-                currentTurn: userId,
+                currentTurn: null,
                 currentSuit: null,
                 currentWinningCard: null,
                 overriddenBySpade: false,
