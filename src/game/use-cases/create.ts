@@ -3,7 +3,6 @@ import { RequestHandler } from 'express';
 import User from '../../user/user.model';
 import CustomError from '../../_helpers/custom-error';
 import gameResponse from '../../_helpers/game-response';
-import socketIO from '../../socket';
 
 const create: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -67,11 +66,7 @@ const create: RequestHandler = async (req, res, next) => {
                     ],
 
             });
-            const savedGame = await game.save();
-
-            socketIO.getIO().on('connection', socket => {
-                socket.join(savedGame._id);
-            });
+            const savedGame = await game.save()
 
             res.status(200).json(gameResponse(userId, savedGame));
         }

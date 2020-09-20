@@ -47,3 +47,21 @@ const server = app.listen(PORT, () => { console.log("Server is running.") });
 
 // Socket.IO
 const io = socketIO.init(server);
+
+io.on('connect', socket => {
+
+    socket.on('JOIN_GAME', ({ room }) => {
+        socket.join(room, () => {
+            socket.to(room).emit('GAME_UPDATED')
+        })
+    })
+
+    socket.on('UPDATE_GAME', ({ room }) => {
+        socket.to(room).emit('GAME_UPDATED')
+    })
+
+    socket.on('EXIT_GAME', ({ room }) => {
+        socket.to(room).emit('GAME_EXITED')
+        socket.leave(room)
+    })
+})
