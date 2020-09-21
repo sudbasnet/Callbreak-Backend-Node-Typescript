@@ -17,7 +17,7 @@ const gameData: RequestHandler = async (req, res, next) => {
 
         let incompleteGame: GameSchema;
         const activeGames = await Game.find({ status: { $ne: gameStatus.INACTIVE } });
-        const incompleteGames = activeGames.filter(g => g.players.map(p => String(p.id)).includes(userId));
+        const incompleteGames = activeGames.filter(g => g.privatePlayerList.map(p => String(p.id)).includes(userId));
         if (incompleteGames.length > 0) {
             incompleteGame = incompleteGames[0];
             res.status(200).json(gameResponse(userId, incompleteGame));

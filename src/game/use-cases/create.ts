@@ -28,8 +28,8 @@ const create: RequestHandler = async (req, res, next) => {
                 status: gameStatus.WAITING,
                 createdBy: userId,
 
+                handNumber: 1,
                 gameNumber: 1,
-                roundNumber: 1,
 
                 playerList: [
                     {
@@ -42,8 +42,8 @@ const create: RequestHandler = async (req, res, next) => {
                         betPlaced: false
                     }
                 ],
-                gameScores: [{ gameNumber: 1, playerId: userId, score: 0 }],
-                playedRounds: [],
+                gameScores: [{ roundNumber: 1, playerId: userId, score: 0 }],
+                playedHands: [],
                 cardsOnTable: [],
 
                 currentTurn: null,
@@ -54,7 +54,7 @@ const create: RequestHandler = async (req, res, next) => {
                 gameType: gameType,
                 start: new Date(),
 
-                players:
+                privatePlayerList:
                     [
                         {
                             id: userId,

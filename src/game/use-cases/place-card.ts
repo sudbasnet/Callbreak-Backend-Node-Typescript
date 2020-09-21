@@ -18,8 +18,8 @@ const placeCard: RequestHandler = async (req, res, next) => {
             throw new CustomError('Cannot find game.', 404)
         }
 
-        const playersIndex = game.players.findIndex(x => x.id === userId)
-        const playerCards = game.players[playersIndex].cards
+        const playersIndex = game.privatePlayerList.findIndex(x => x.id === userId)
+        const playerCards = game.privatePlayerList[playersIndex].cards
         const cardsOnTable = game.cardsOnTable
 
         if (playerCards) {

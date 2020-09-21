@@ -21,7 +21,7 @@ const cancel: RequestHandler = async (req, res, next) => {
             throw new CustomError('User does not exist!', 404);
         }
 
-        const isValidPlayer = game.players.map(x => x.id).includes(userId);
+        const isValidPlayer = game.privatePlayerList.map(x => x.id).includes(userId);
         if (!isValidPlayer) {
             throw new CustomError('User does not have any game!', 404);
         }
@@ -33,17 +33,17 @@ const cancel: RequestHandler = async (req, res, next) => {
         } else {
             // delete player if not creator
             if (game.status === gameStatus.ACTIVE) {
-                const playersIndex = game.players.findIndex(p => String(p.id) === String(userId));
+                const playersIndex = game.privatePlayerList.findIndex(p => String(p.id) === String(userId));
                 const playerListIndex = game.playerList.findIndex(p => String(p.id) === String(userId));
 
                 let bots = await User.find({ role: 'bot' });
 
                 for (const bot of bots) {
-                    if (!game.players.map(x => x.id).includes(bot._id)) {
+                    if (!game.privatePlayerList.map(x => x.id).includes(bot._id)) {
 
-                        game.players[playersIndex].id = bot._id
-                        game.players[playersIndex].name = bot.name
-                        game.players[playersIndex].bot = true
+                        game.privatePlayerList[playersIndex].id = bot._id
+                        game.privatePlayerList[playersIndex].name = bot.name
+                        game.privatePlayerList[playersIndex].bot = true
 
                         game.playerList[playerListIndex].id = bot._id
                         game.playerList[playerListIndex].name = bot.name
@@ -58,7 +58,7 @@ const cancel: RequestHandler = async (req, res, next) => {
                 }
                 await game.save();
             } else {
-                game.players = game.players.filter(p => String(p.id) != userId);
+                game.privatePlayerList = game.privatePlayerList.filter(p => String(p.id) != userId);
                 game.playerList = game.playerList.filter(p => String(p.id) != userId);
                 await game.save();
             }

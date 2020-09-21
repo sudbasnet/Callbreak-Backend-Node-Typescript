@@ -29,8 +29,8 @@ const bet: RequestHandler = async (req, res, next) => {
         }
 
         if (game.status === gameStatus.ACTIVE) {
-            let botIndexPlayers = game.players.findIndex(x => String(x.id) === botId)
-            const botCardsJson = game.players[botIndexPlayers].cards || []
+            let botIndexPlayers = game.privatePlayerList.findIndex(x => String(x.id) === botId)
+            const botCardsJson = game.privatePlayerList[botIndexPlayers].cards || []
             let bet = Bot.betFromCards(botCardsJson)
 
             let botIndexPlayerList = game.playerList.findIndex(x => String(x.id) === botId)

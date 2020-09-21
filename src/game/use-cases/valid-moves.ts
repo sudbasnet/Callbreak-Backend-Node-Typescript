@@ -23,8 +23,8 @@ const validMoves: RequestHandler = async (req, res, next) => {
             next();
         }
 
-        const currentPlayerIndex = game.players.findIndex(x => x.id === userId);
-        let player = game.players[currentPlayerIndex];
+        const currentPlayerIndex = game.privatePlayerList.findIndex(x => x.id === userId);
+        let player = game.privatePlayerList[currentPlayerIndex];
 
         if (!player.cards) {
             throw new CustomError('No cards available for the player.', 500);
@@ -66,7 +66,7 @@ const validMoves: RequestHandler = async (req, res, next) => {
                 }
             }
         }
-        game.players[currentPlayerIndex].possibleMoves = possibleMoves;
+        game.privatePlayerList[currentPlayerIndex].possibleMoves = possibleMoves;
         const savedGame = await game.save();
 
         res.status(200).json(gameResponse(userId, savedGame));

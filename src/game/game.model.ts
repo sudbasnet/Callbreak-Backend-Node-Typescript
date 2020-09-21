@@ -9,7 +9,7 @@ export const enum gameStatus {
     "INACTIVE" = "inactive"
 };
 
-export interface PlayerData {
+export interface PrivatePlayerList {
     id: UserSchema['_id'];
     name?: string;
     bot: boolean;
@@ -21,29 +21,26 @@ export interface GameSchema extends Document {
     status: string;
     createdBy: UserSchema['_id'];
 
-    gameNumber: number;
     roundNumber: number;
+    handNumber: number;
 
     playerList: {
         id: UserSchema['_id'],
         name: string,
         bot: boolean,
-        bet: number,
-        score: number,
-        totalScore: number
-        betPlaced: boolean
+        bet?: number,
+        score?: number,
+        totalScore?: number
+        betPlaced?: boolean
     }[];
 
     gameScores: {
-        gameNumber: number,
+        roundNumber: number,
         playerId: UserSchema['_id'],
         score: number
     }[];
 
-    playedRounds: {
-        won: boolean,
-        card: Card
-    }[][];
+    playedHands: Card[][];
 
     cardsOnTable: Card[];
     currentTurn: UserSchema['_id'];
@@ -56,25 +53,25 @@ export interface GameSchema extends Document {
     start: Date;
     end?: Date;
 
-    players: PlayerData[];
+    privatePlayerList: PrivatePlayerList[];
 };
 
 const Game: Schema = new Schema({
     status: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
 
-    gameNumber: { type: Number, default: 0 },
     roundNumber: { type: Number, default: 0 },
+    handNumber: { type: Number, default: 0 },
 
     playerList: {
         type: [
             {
                 id: { type: Schema.Types.ObjectId, ref: 'User' },
                 name: { type: String },
-                bot: { type: Boolean },
-                bet: { type: Number },
-                score: { type: Number },
-                totalScore: { type: Number },
+                bot: { type: Boolean, required: true },
+                bet: { type: Number, default: 0 },
+                score: { type: Number, default: 0 },
+                totalScore: { type: Number, default: 0 },
                 betPlaced: { type: Boolean, default: false },
             }
         ]
@@ -82,17 +79,13 @@ const Game: Schema = new Schema({
 
     gameScores: {
         type: [{
-            gameNumber: { type: Number },
+            roundNumber: { type: Number },
             playerId: { type: Schema.Types.ObjectId, ref: 'User' },
             score: { type: Number }
         }]
     },
-    playedRounds: {
-        type: [
-            [
-                { won: { type: Boolean }, card: { type: { suit: { type: String }, value: { type: String } } } }
-            ]
-        ]
+    playedHands: {
+        type: [[{ suit: { type: String }, value: { type: String } }]]
     },
     cardsOnTable: {
         type: [
@@ -107,16 +100,16 @@ const Game: Schema = new Schema({
 
     gameType: { type: String },
     start: { type: Date },
-    end: { type: Date, required: false },
+    end: { type: Date },
 
-    players: {
+    privatePlayerList: {
         type: [
             {
                 id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-                name: { type: String, required: false },
+                name: { type: String },
                 bot: { type: Boolean, default: false },
-                cards: { type: [{ suit: { type: String }, value: { type: String } }], required: false },
-                possibleMoves: { type: [{ suit: { type: String }, value: { type: String } }], required: false }
+                cards: { type: [{ suit: { type: String }, value: { type: String } }], default: [] },
+                possibleMoves: { type: [{ suit: { type: String }, value: { type: String } }], default: [] }
             }
         ]
     }

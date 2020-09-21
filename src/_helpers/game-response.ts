@@ -1,14 +1,14 @@
 import { GameSchema } from '../game/game.model';
 
 export default (userId: string, game: GameSchema) => {
-    const i = game.players.findIndex(p => String(p.id) === userId);
-    const player = game.players[i];
+    const i = game.privatePlayerList.findIndex(p => String(p.id) === userId);
+    const player = game.privatePlayerList[i];
     const global = {
-        gameNumber: game.gameNumber,
+        handNumber: game.handNumber,
         roundNumber: game.roundNumber,
         playerList: game.playerList,
         scores: game.gameScores,
-        playedRounds: game.playedRounds,
+        playedHands: game.playedHands,
         cardsOnTable: game.cardsOnTable,
         currentTurn: game.currentTurn
     };

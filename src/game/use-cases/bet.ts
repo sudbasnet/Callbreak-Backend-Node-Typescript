@@ -19,7 +19,7 @@ const bet: RequestHandler = async (req, res, next) => {
             throw new CustomError('The game does not exist!', 404);
         }
 
-        const isValidPlayer = game.players.map(x => x.id).includes(userId);
+        const isValidPlayer = game.privatePlayerList.map(x => x.id).includes(userId);
         if (!isValidPlayer) {
             throw new CustomError('Incorrect Game', 404);
         }
