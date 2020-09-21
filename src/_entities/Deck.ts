@@ -15,7 +15,7 @@ export const enum facecardValues {
 };
 
 export class Card {
-    constructor(public suit: string, public value: string) { }
+    constructor(public suit: string, public value: string, public playedBy: string = '') { }
 
     public numericValue(): number {
         try {
@@ -33,13 +33,13 @@ export class Card {
         }
         throw new CustomError('Invalid value of card.', 500);
     }
-};
+}
 
 export default class Deck {
     public static suites: suits[] = [suits.HEARTS, suits.SPADES, suits.DIAMONDS, suits.CLUBS];
     public static cardValues: string[] = ['2', '3', '4', '5', '6', '7', '8', '9', '10', "ace", "king", "queen", "jack"];
 
-    public static getFullDeck() {
+    public static getFullCardDeck() {
         let deck: Card[] = [];
         Deck.suites.forEach(suit => Deck.cardValues.forEach(cardValue => deck.push(new Card(suit, cardValue))));
         return deck;
@@ -51,7 +51,7 @@ export default class Deck {
 
     public static dealCards(numberOfCards: number, numberOfPlayers: number) {
         // eg: to deal 5 cards to 3 players, dealCards(5, 3)
-        let deck = Deck.getFullDeck();
+        let deck = Deck.getFullCardDeck();
         let dealtCards: Card[][] = [];
         let i = 0;
         while (i < numberOfPlayers) {
@@ -71,6 +71,20 @@ export default class Deck {
             cardsDealt++;
         }
 
-        return { dealt: dealtCards, remaining: deck };
+        return { arrayOfDealtCards: dealtCards, remainingCards: deck };
     }
+
+    public static calculateCallbreakWinner(cardA: Card, cardB: Card, playingSuit: suits): Card {
+        if (cardA.suit === cardB.suit) {
+            return cardA.numericValue() > cardB.numericValue() ? cardA : cardB
+        } else if (cardA.suit === suits.SPADES) {
+            return cardA
+        } else if (cardB.suit === suits.SPADES) {
+            return cardB
+        } else if (cardA.suit === playingSuit) {
+            return cardA
+        } else {
+            return cardB
+        }
+    };
 };
