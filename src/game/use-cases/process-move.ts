@@ -1,77 +1,65 @@
-// POST request for updating the data from the frontend to the backend
+import Game from '../game.model'
+import { RequestHandler } from 'express'
+import CustomError from '../../_helpers/custom-error'
+import Deck, { suits } from '../../_entities/Deck';
+import { ADDRGETNETWORKPARAMS } from 'dns';
 
-/*
+const placeCard: RequestHandler = async (req, res, next) => {
+    const userId = req.userId
+    const userName = req.userName
+    const gameId = req.params.gameId
+    const { suit, value, playedBy } = req.body
 
-data will be received in the format: 
-====================================
-userId:  // comes from auth token <-- this should be the current player
-gameType: // comes from param
-gameId: // comes from param
-playedCard: { suit: , value: } // comes from body this is the card that the player played
-
-need to check the following:
-=============================
-is the user the current user? 
-what is the current game, round and turn number?
-
-if the user is not the current user, then error.
-
-gameNumber: 0, 1, 2, 3, 4 <-- possible values
-roundNumber: 0, 1, 2, ... 12 <-- possible values
-turnNumber: 0, 1, 2, 3 <-- possible values
-
-if currentTurnNumber == 3 :
-    roundNumber ++;
-        if roundNumber == 12:
-            gameNumber ++
-turnNumber = (currentTurnNumber + 1) % 4; 
-newTurnNumber % 4 is the player's index who is the new nextPlayer
-
-if turnnumber === 12, means the game is over
-*/
-
-import Game from '../game.model';
-import { Card } from '../../_entities/Deck';
-import CustomError from '../../_helpers/custom-error';
-import { RequestHandler } from 'express';
-import gameResponse from '../../_helpers/game-response';
-
-const processMove: RequestHandler = async (req, res, next) => {
-    const userId = req.userId;
-    const gameId = req.params.gameId;
-
-    if (!userId) {
-        throw new CustomError('The user does not exist.', 404);
+    if (!userId || !userName) {
+        throw new CustomError('The user does not exist.', 404)
     }
 
     try {
-        const game = await Game.findById(gameId);
-
+        const game = await Game.findById(gameId)
         if (!game) {
-            throw new CustomError('The game does not exist.', 404);
+            throw new CustomError('Cannot find game.', 404)
         }
 
-        const isUsersTurn = userId === String(game.currentTurn)
-        if (!isUsersTurn) {
-            next();
+        if (String(game.currentTurn) != userId) {
+            throw new CustomError('Not your turn.', 500)
         }
 
-        const privatePlayerListIndex = game.privatePlayerList.findIndex(x => x.id === userId)
-        const playerListIndex = game.playerList.findIndex(x => x.id === userId)
+        const playersIndex = game.privatePlayerList.findIndex(x => String(x.id) === userId)
+        const playerCards = game.privatePlayerList[playersIndex].cards
+        let cardsOnTable = game.cardsOnTable
 
-        if (game.cardsOnTable.length === 4) {
-            game.playedHands.push(game.cardsOnTable)
-            game.playedHands = []
+        if (cardsOnTable.length === 4) {
+            cardsOnTable = []
         }
-        // calculateWinner()
-        // assignNextTurn()
-        // updateGameInfo() // roundNumber and HandNumber
 
-        const savedGame = await game.save();
-        res.status(200).json(gameResponse(userId, savedGame));
+        if (playerCards) {
+            const i = playerCards.findIndex(x => x.suit === suit && x.value === value)
+            playerCards[i].playedBy = playedBy
+            cardsOnTable.push(playerCards[i])
+
+            if (suit === suits.SPADES && game.currentSuit != suit) {
+                game.overriddenBySpade = true
+            }
+
+            if (game.currentWinningCard && game.currentSuit) {
+                game.currentWinningCard = Deck.calculateCallbreakWinner(game.currentWinningCard, playerCards[i], game.currentSuit)
+            } else {
+                game.currentWinningCard = playerCards[i]
+                game.currentSuit = suit
+            }
+
+            playerCards.splice(i, 1)
+        }
+
+        game.privatePlayerList[playersIndex].possibleMoves = []
+        game.markModified('privatePlayerList')
+
+        await game.save()
+        next()
+
     } catch (err) {
         next(err);
     }
 };
 
-export default processMove;
+export default placeCard;

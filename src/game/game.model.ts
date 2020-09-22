@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { UserSchema } from '../user/user.model';
-import { Card } from '../_entities/Deck';
+import { Card, suits } from '../_entities/Deck';
 
 export const enum gameStatus {
     "WAITING" = "waiting",
@@ -28,10 +28,10 @@ export interface GameSchema extends Document {
         id: UserSchema['_id'],
         name: string,
         bot: boolean,
-        bet?: number,
-        score?: number,
-        totalScore?: number
-        betPlaced?: boolean
+        bet: number,
+        score: number,
+        totalScore: number
+        betPlaced: boolean
     }[];
 
     gameScores: {
@@ -45,7 +45,7 @@ export interface GameSchema extends Document {
     cardsOnTable: Card[];
     currentTurn: UserSchema['_id'];
 
-    currentSuit?: string;
+    currentSuit?: suits;
     currentWinningCard?: Card;
     overriddenBySpade: boolean;
 
@@ -85,17 +85,17 @@ const Game: Schema = new Schema({
         }]
     },
     playedHands: {
-        type: [[{ suit: { type: String }, value: { type: String } }]]
+        type: [[{ suit: { type: String }, value: { type: String }, playedBy: { type: String } }]]
     },
     cardsOnTable: {
         type: [
-            { suit: { type: String }, value: { type: String } }
+            { suit: { type: String }, value: { type: String }, playedBy: { type: String } }
         ]
     },
 
     currentTurn: { type: Schema.Types.ObjectId, ref: 'User' },
     currentSuit: { type: String, required: false },
-    currentWinningCard: { type: { suit: { type: String }, value: { type: String } }, required: false },
+    currentWinningCard: { type: { suit: { type: String }, value: { type: String }, playedBy: { type: String } }, required: false },
     overriddenBySpade: { type: Boolean, default: false },
 
     gameType: { type: String },
@@ -108,8 +108,8 @@ const Game: Schema = new Schema({
                 id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
                 name: { type: String },
                 bot: { type: Boolean, default: false },
-                cards: { type: [{ suit: { type: String }, value: { type: String } }], default: [] },
-                possibleMoves: { type: [{ suit: { type: String }, value: { type: String } }], default: [] }
+                cards: { type: [{ suit: { type: String }, value: { type: String }, playedBy: { type: String } }], default: [] },
+                possibleMoves: { type: [{ suit: { type: String }, value: { type: String }, playedBy: { type: String } }], default: [] }
             }
         ]
     }

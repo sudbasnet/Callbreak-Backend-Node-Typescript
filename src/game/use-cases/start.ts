@@ -22,7 +22,11 @@ const initializedPlayerListItem = (user: UserSchema) => {
     return {
         id: user._id,
         name: user.name,
-        bot: user.role === 'bot' ? true : false
+        bot: user.role === 'bot' ? true : false,
+        bet: 0,
+        score: 0,
+        totalScore: 0,
+        betPlaced: false
     }
 }
 

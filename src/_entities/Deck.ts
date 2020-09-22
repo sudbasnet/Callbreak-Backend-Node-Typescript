@@ -15,23 +15,27 @@ export const enum facecardValues {
 };
 
 export class Card {
-    constructor(public suit: string, public value: string, public playedBy: string = '') { }
+    constructor(public suit: suits, public value: string, public playedBy: string = '') { }
 
-    public numericValue(): number {
+    numericValue(): number {
+        let num: number;
         try {
-            return + this.value;
-        }
-        catch (err) {
             if (this.value === 'jack') {
-                return facecardValues.JACK;
+                num = 11;
             } else if (this.value === 'queen') {
-                return facecardValues.QUEEN;
+                num = 12;
             } else if (this.value === 'king') {
-                return facecardValues.KING;
-            } else if (this.value === 'ace')
-                return facecardValues.ACE;
+                num = 13;
+            } else if (this.value === 'ace') {
+                num = 14
+            } else {
+                num = +this.value
+            }
+        } catch (err) {
+            throw new CustomError(err.message, 500);
         }
-        throw new CustomError('Invalid value of card.', 500);
+        return num
+
     }
 }
 
@@ -75,6 +79,10 @@ export default class Deck {
     }
 
     public static calculateCallbreakWinner(cardA: Card, cardB: Card, playingSuit: suits): Card {
+
+        cardA = new Card(cardA.suit, cardA.value, cardA.playedBy)
+        cardB = new Card(cardB.suit, cardB.value, cardB.playedBy)
+
         if (cardA.suit === cardB.suit) {
             return cardA.numericValue() > cardB.numericValue() ? cardA : cardB
         } else if (cardA.suit === suits.SPADES) {

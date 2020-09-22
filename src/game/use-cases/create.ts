@@ -29,7 +29,7 @@ const create: RequestHandler = async (req, res, next) => {
                 createdBy: userId,
 
                 handNumber: 1,
-                gameNumber: 1,
+                roundNumber: 1,
 
                 playerList: [
                     {

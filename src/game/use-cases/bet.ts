@@ -41,8 +41,12 @@ const bet: RequestHandler = async (req, res, next) => {
 
             game.playerList[i].bet = bet;
             game.playerList[i].betPlaced = true;
-            // change the current turn to the next player
-            game.currentTurn = game.playerList[(i + 1) % 4].id;
+
+            // change the current turn to the next player unless its the host
+            // in round 1, host bets last and plays first
+            if (String(game.currentTurn) != String(game.createdBy)) {
+                game.currentTurn = game.playerList[(i + 1) % 4].id;
+            }
 
             const savedGame = await game.save();
 

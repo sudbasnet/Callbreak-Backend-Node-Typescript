@@ -5,6 +5,9 @@ import gameData from './use-cases/game-data';
 import start from './use-cases/start'
 import bet from './use-cases/bet';
 import botBet from './use-cases/bot/request-bet';
+import botMove from './use-cases/bot/request-move'
+import processMove from './use-cases/process-move'
+import returnMoveResult from './use-cases/return-move-result'
 
 export default {
     create,
@@ -13,5 +16,8 @@ export default {
     start,
     gameData,
     bet,
-    botBet
+    botBet,
+    botMove,
+    processMove,
+    returnMoveResult
 }
