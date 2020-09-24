@@ -1,4 +1,4 @@
-import Game from '../game/game.model';
+import Game, { gameStatus } from '../game/game.model';
 import { RequestHandler } from 'express';
 import CustomError from '../_helpers/custom-error';
 
@@ -18,6 +18,13 @@ const isPlayerTurn: RequestHandler = async (req, res, next) => {
         }
         if (String(game.currentTurn) != userId) {
             throw new CustomError('Not your turn.', 500);
+        }
+        if (game.status === gameStatus.ACTIVE) {
+            throw new CustomError('Game is not active!', 500);
+        }
+        const isValidPlayer = game.privatePlayerList.map(x => x.id).includes(userId);
+        if (!isValidPlayer) {
+            throw new CustomError('Incorrect Game', 404);
         }
         next();
     } catch (err) {

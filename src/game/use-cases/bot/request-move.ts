@@ -21,21 +21,17 @@ const botMove: RequestHandler = async (req, res, next) => {
             throw new CustomError('The game does not exist!', 404);
         }
 
-        if (game.status === gameStatus.ACTIVE) {
-            // Bot.makeMove()
-            const privatePlayersIndex = game.privatePlayerList.findIndex(x => String(x.id) === botId);
-            const botCards = game.privatePlayerList[privatePlayersIndex].cards || [];
+        // Bot.makeMove()
+        const privatePlayersIndex = game.privatePlayerList.findIndex(x => String(x.id) === botId);
+        const botCards = game.privatePlayerList[privatePlayersIndex].cards || [];
 
-            let playedCard = Bot.makeMove(botCards, String(game.currentSuit), game.currentWinningCard || null);
+        let playedCard = Bot.makeMove(botCards, String(game.currentSuit), game.currentWinningCard || null);
 
-            req.body.suit = playedCard.suit;
-            req.body.value = playedCard.value;
-            req.body.playedBy = botId;
+        req.body.suit = playedCard.suit;
+        req.body.value = playedCard.value;
+        req.body.playedBy = botId;
 
-            next();
-        } else {
-            throw new CustomError('This game is no longer active!', 500);
-        }
+        next();
     } catch (err) {
         next(err);
     }

@@ -19,41 +19,26 @@ const bet: RequestHandler = async (req, res, next) => {
             throw new CustomError('The game does not exist!', 404);
         }
 
-        const isValidPlayer = game.privatePlayerList.map(x => x.id).includes(userId);
-        if (!isValidPlayer) {
-            throw new CustomError('Incorrect Game', 404);
-        }
-
         if (bet > 13 || bet < 1) {
             throw new CustomError('Bet needs to be between 1 and 13', 500);
         }
 
-        if (String(game.currentTurn) != String(userId)) {
-            throw new CustomError('Not your turn to play!', 500);
+        let i = game.playerList.findIndex(x => String(x.id) === String(userId));
+        if (game.playerList[i].betPlaced) {
+            throw new CustomError('Bet cannot be changed once placed!', 500);
         }
 
-        if (game.status === gameStatus.ACTIVE) {
-            let i = game.playerList.findIndex(x => String(x.id) === String(userId));
+        game.playerList[i].bet = bet;
+        game.playerList[i].betPlaced = true;
 
-            if (game.playerList[i].betPlaced) {
-                throw new CustomError('Bet cannot be changed once placed!', 500);
-            }
-
-            game.playerList[i].bet = bet;
-            game.playerList[i].betPlaced = true;
-
-            // change the current turn to the next player unless its the host
-            // in round 1, host bets last and plays first
-            if (String(game.currentTurn) != String(game.createdBy)) {
-                game.currentTurn = game.playerList[(i + 1) % 4].id;
-            }
-
-            const savedGame = await game.save();
-
-            res.status(200).json(gameResponse(userId, savedGame));
-        } else {
-            throw new CustomError('This game is no longer active!', 500);
+        // change the current turn to the next player unless its the host
+        // in round 1, host bets last and plays first
+        if (String(game.currentTurn) != String(game.createdBy)) {
+            game.currentTurn = game.playerList[(i + 1) % 4].id;
         }
+
+        const savedGame = await game.save();
+        res.status(200).json(gameResponse(userId, savedGame));
     } catch (err) {
         next(err);
     }

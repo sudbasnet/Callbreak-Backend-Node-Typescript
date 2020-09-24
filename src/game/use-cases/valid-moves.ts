@@ -19,10 +19,6 @@ const validMoves: RequestHandler = async (req, res, next) => {
             throw new CustomError('The game does not exist.', 404);
         }
 
-        if (userId != currentPlayer) {
-            next();
-        }
-
         const currentPlayerIndex = game.privatePlayerList.findIndex(x => x.id === userId);
         let player = game.privatePlayerList[currentPlayerIndex];
 

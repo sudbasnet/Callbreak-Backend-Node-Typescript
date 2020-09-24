@@ -22,6 +22,9 @@ const isBotTurn: RequestHandler = async (req, res, next) => {
         if (String(game.currentTurn) != botId) {
             throw new CustomError('Not bot turn to play!', 500);
         }
+        if (game.status === gameStatus.ACTIVE) {
+            throw new CustomError('Game is not active!', 500);
+        }
         next();
     } catch (err) {
         next(err);

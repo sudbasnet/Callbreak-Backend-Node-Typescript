@@ -15,39 +15,26 @@ const bet: RequestHandler = async (req, res, next) => {
 
     try {
         const game = await Game.findById(gameId);
-
         if (!game) {
             throw new CustomError('The game does not exist!', 404);
         }
 
-        if (String(game.createdBy) != userId) {
-            next();
-        } else {
-            if (String(game.currentTurn) != botId) {
-                throw new CustomError('Not bot turn to play!', 500);
-            }
+        let botIndexPlayers = game.privatePlayerList.findIndex(x => String(x.id) === botId)
+        const botCardsJson = game.privatePlayerList[botIndexPlayers].cards || []
+        let bet = Bot.betFromAvailableCards(botCardsJson)
 
-            if (game.status === gameStatus.ACTIVE) {
-                let botIndexPlayers = game.privatePlayerList.findIndex(x => String(x.id) === botId)
-                const botCardsJson = game.privatePlayerList[botIndexPlayers].cards || []
-                let bet = Bot.betFromAvailableCards(botCardsJson)
-
-                let botIndexPlayerList = game.playerList.findIndex(x => String(x.id) === botId)
-                if (game.playerList[botIndexPlayerList].betPlaced) {
-                    throw new CustomError('Bet cannot be placed more than once!', 500);
-                }
-                game.playerList[botIndexPlayerList].bet = bet;
-                game.playerList[botIndexPlayerList].betPlaced = true
-                // change the current turn to the next player
-                game.currentTurn = game.playerList[(botIndexPlayerList + 1) % 4].id;
-
-                const savedGame = await game.save();
-
-                res.status(200).json(gameResponse(userId, savedGame));
-            } else {
-                throw new CustomError('This game is no longer active!', 500);
-            }
+        let botIndexPlayerList = game.playerList.findIndex(x => String(x.id) === botId)
+        if (game.playerList[botIndexPlayerList].betPlaced) {
+            throw new CustomError('Bet cannot be placed more than once!', 500);
         }
+        game.playerList[botIndexPlayerList].bet = bet;
+        game.playerList[botIndexPlayerList].betPlaced = true
+        // change the current turn to the next player
+        game.currentTurn = game.playerList[(botIndexPlayerList + 1) % 4].id;
+
+        const savedGame = await game.save();
+        res.status(200).json(gameResponse(userId, savedGame));
+
     } catch (err) {
         next(err);
     }
