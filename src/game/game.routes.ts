@@ -10,9 +10,9 @@ router.post('/:gameType/:gameId/bet', gameController.bet);
 
 router.get('/callbreak/:gameId/bot-bet/:botId', gameController.botBet); // success method 200
 
-router.get('/callbreak/:gameId/bot-move/:botId', gameController.botMove); // success method 200
+router.get('/callbreak/:gameId/bot-move/:botId', gameController.botMove, gameController.processMove); // success method 200
 
-router.post('/callbreak/:gameId/play-hand', gameController.processMove, gameController.returnMoveResult)
+router.post('/callbreak/:gameId/play-hand', gameController.processMove)
 
 // Other Routes
 router.get('/:gameType/new', gameController.create); // returns a gameId
