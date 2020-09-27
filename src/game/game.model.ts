@@ -13,8 +13,8 @@ export interface PrivatePlayerList {
     id: UserSchema['_id'];
     name?: string;
     bot: boolean;
-    cards?: Card[];
-    possibleMoves?: Card[];
+    cards: Card[];
+    possibleMoves: Card[];
 };
 
 export interface GameSchema extends Document {
@@ -54,6 +54,39 @@ export interface GameSchema extends Document {
     end?: Date;
 
     privatePlayerList: PrivatePlayerList[];
+
+    addUserToGame(user: UserSchema): void;
+};
+
+
+export const initializedPrivatePlayerListItem = (user: UserSchema) => {
+    return {
+        id: user._id,
+        name: user.name,
+        bot: user.role === 'bot' ? true : false,
+        cards: [],
+        possibleMoves: []
+    };
+};
+
+export const initializedGameScoresItem = (userId: string) => {
+    return {
+        roundNumber: 1,
+        playerId: userId,
+        score: 0
+    };
+};
+
+export const initializedPlayerListItem = (user: UserSchema) => {
+    return {
+        id: user._id,
+        name: user.name,
+        bot: user.role === 'bot' ? true : false,
+        bet: 1,
+        score: 0,
+        totalScore: 0,
+        betPlaced: false
+    };
 };
 
 const Game: Schema = new Schema({
@@ -115,5 +148,14 @@ const Game: Schema = new Schema({
     }
 });
 
+Game.methods = {
+    addUserToGame(user: UserSchema) {
+        this.playerList.push(initializedPlayerListItem(user));
+        this.privatePlayerList.push(initializedPrivatePlayerListItem(user));
+        this.gameScores.push(initializedGameScoresItem(user._id));
+    }
+};
+
+Game.statics = {};
 
 export default model<GameSchema>('Game', Game);
