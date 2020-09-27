@@ -24,34 +24,16 @@ const join: RequestHandler = async (req, res, next) => {
             throw new CustomError('Cannot find user.', 404);
         }
 
-        const playerAlreadyJoined = game.privatePlayerList.map(x => x.id).includes(userId) || game.playerList.map(x => x.id).includes(userId);
-        const gameIsFull = game.privatePlayerList.length === 4
+        const playerAlreadyJoined = game.playerList.map(x => x.id).includes(userId);
+        const gameIsFull = game.privatePlayerList.length === 4;
 
         if (playerAlreadyJoined || gameIsFull) {
             throw new CustomError('Cannot join game!', 500);
         }
         if (game.privatePlayerList.length <= 4) {
-            game.privatePlayerList.push(
-                {
-                    id: userId,
-                    name: userName,
-                    bot: false,
-                    cards: [],
-                    possibleMoves: []
-                });
-
-            game.playerList.push(
-                {
-                    id: userId,
-                    name: userName,
-                    bet: 0,
-                    bot: false,
-                    score: 0,
-                    totalScore: 0,
-                    betPlaced: false
-                }
-            );
+            game.addUserToGame(player);
             const savedGame = await game.save();
+
             res.status(200).json(gameResponse(userId, savedGame));
         }
     } catch (err) {

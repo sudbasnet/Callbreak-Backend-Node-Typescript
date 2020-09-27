@@ -1,4 +1,4 @@
-import Game, { gameStatus } from '../game.model';
+import Game, { gameStatus, initializedGameScoresItem, initializedPlayerListItem, initializedPrivatePlayerListItem } from '../game.model';
 import { RequestHandler } from 'express';
 import User from '../../user/user.model';
 import CustomError from '../../_helpers/custom-error';
@@ -6,7 +6,6 @@ import gameResponse from '../../_helpers/game-response';
 
 const create: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
-    const userName = req.userName;
     const gameType = req.params.gameType;
 
     if (!userId) {
@@ -26,45 +25,18 @@ const create: RequestHandler = async (req, res, next) => {
         } else {
             const game = new Game({
                 status: gameStatus.WAITING,
-                createdBy: userId,
-
+                createdBy: user._id,
                 handNumber: 1,
                 roundNumber: 1,
-
-                playerList: [
-                    {
-                        id: userId,
-                        name: userName,
-                        bet: 0,
-                        bot: false,
-                        score: 0,
-                        totalScore: 0,
-                        betPlaced: false
-                    }
-                ],
-                gameScores: [{ roundNumber: 1, playerId: userId, score: 0 }],
+                playerList: [initializedPlayerListItem(user)],
+                gameScores: [initializedGameScoresItem(user._id)],
                 playedHands: [],
                 cardsOnTable: [],
-
                 currentTurn: null,
-                currentSuit: null,
-                currentWinningCard: null,
                 overriddenBySpade: false,
-
                 gameType: gameType,
                 start: new Date(),
-
-                privatePlayerList:
-                    [
-                        {
-                            id: userId,
-                            name: req.userName,
-                            bot: false,
-                            cards: [],
-                            possibleMoves: []
-                        }
-                    ],
-
+                privatePlayerList: [initializedPrivatePlayerListItem(user)]
             });
             const savedGame = await game.save()
 
