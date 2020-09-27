@@ -17,7 +17,7 @@ export interface UserSchema extends Document {
 
 export enum UserRole { ADMIN = 'admin', PLAYER = 'player' };
 
-const User: Schema = new Schema({
+const User: Schema<UserSchema> = new Schema({
     name: { type: String, required: true, min: 3, max: 225 },
     email: { type: String, required: true, min: 6, max: 225 },
     password: { type: String, required: true, max: 1024, min: 6 },
@@ -32,5 +32,11 @@ const User: Schema = new Schema({
 },
     { timestamps: true }
 );
+
+User.statics = {
+    async findAllBots() {
+        return await this.find({ role: 'bot' });
+    }
+};
 
 export default model<UserSchema>('User', User);
