@@ -46,9 +46,9 @@ const gameData: RequestHandler = async (req, res, next) => {
                 const savedGame = await game.save();
 
                 res.status(200).json(gameResponse(userId, savedGame));
+            } else {
+                res.status(200).json(gameResponse(userId, game));
             }
-
-            res.status(200).json(gameResponse(userId, game));
         } else {
             throw new CustomError('The current user has no pre-existing game', 404);
         }
