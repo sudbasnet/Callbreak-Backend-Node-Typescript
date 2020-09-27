@@ -5,8 +5,6 @@ const getHighestValueCard = (cards: Card[], ignoreSuit = true) => {
     let highestCard = cards[0]
     if (ignoreSuit) {
         cards.forEach(card => {
-            console.log(card)
-            console.log(`num: ${card.numericValue()}`)
             if (card.numericValue() > highestCard.numericValue()) {
                 highestCard = card
             }
@@ -66,7 +64,6 @@ export default class Bot {
         if (winningCard) {
             winningCard = new Card(winningCard?.suit, winningCard?.value, winningCard?.playedBy)
         }
-
 
         if (!winningCard) {
             return cards[0]
