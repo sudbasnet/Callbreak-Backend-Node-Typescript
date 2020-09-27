@@ -1,8 +1,9 @@
-import Game from '../game.model';
+import Game, { GameSchema } from '../game.model';
 import { RequestHandler } from 'express';
 import CustomError from '../../_helpers/custom-error';
 import Deck, { Card, suits } from '../../_entities/Deck';
 import gameResponse from '../../_helpers/game-response';
+
 
 const placeCard: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -20,11 +21,8 @@ const placeCard: RequestHandler = async (req, res, next) => {
             throw new CustomError('Cannot find game.', 404);
         }
 
-        // could be bot too
-        const currentPlayer = String(game.currentTurn);
-
-        const privatePlayerListIndex = game.privatePlayerList.findIndex(x => String(x.id) === currentPlayer);
-        const playerListIndex = game.playerList.findIndex(x => String(x.id) === currentPlayer);
+        const privatePlayerListIndex = game.privatePlayerList.findIndex(x => String(x.id) === String(game.currentTurn));
+        const playerListIndex = game.playerList.findIndex(x => String(x.id) === String(game.currentTurn));
         const playerPrivateListItem = game.privatePlayerList[privatePlayerListIndex];
 
         if (playerPrivateListItem.cards) {
@@ -52,10 +50,14 @@ const placeCard: RequestHandler = async (req, res, next) => {
 
             const handWinnner = Deck.calculateCallbreakWinner(game.currentWinningCard, playedCard, game.currentSuit);
             const handWinnnerIndex = game.playerList.findIndex(x => String(x.id) === String(handWinnner.playedBy));
-            let winnerScore = game.playerList[handWinnnerIndex].score;
-            const winnerBet = game.playerList[handWinnnerIndex].bet;
-            winnerScore += (winnerScore >= winnerBet) ? 0.1 : 1;
-            game.playerList[handWinnnerIndex].totalScore += (winnerScore >= winnerBet) ? 0.1 : 1;
+
+            if (game.playerList[handWinnnerIndex].score >= game.playerList[handWinnnerIndex].bet) {
+                game.playerList[handWinnnerIndex].score += 0.1;
+                game.playerList[handWinnnerIndex].totalScore += 0.1;
+            } else {
+                game.playerList[handWinnnerIndex].score += 1;
+                game.playerList[handWinnnerIndex].totalScore += 1;
+            }
 
             game.overriddenBySpade = false;
             game.currentSuit = undefined;
@@ -95,8 +97,8 @@ const placeCard: RequestHandler = async (req, res, next) => {
 
         game.markModified('privatePlayerList');
         game.markModified('playerList');
-
         const savedGame = await game.save();
+
         res.status(200).json(gameResponse(userId, savedGame));
 
     } catch (err) {
