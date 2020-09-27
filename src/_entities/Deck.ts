@@ -74,7 +74,8 @@ export default class Deck {
             deck.splice(randomPosition, 1); // remove 1 card from position "randomPosition"
             cardsDealt++;
         }
-
+        // sort the arrays
+        dealtCards = dealtCards.map(c => c.sort(compare));
         return { arrayOfDealtCards: dealtCards, remainingCards: deck };
     }
 
@@ -96,3 +97,23 @@ export default class Deck {
         }
     };
 };
+
+
+function compare(cardA: Card, cardB: Card) {
+    // sort in the order: Spades, Hearts, Clubs, Diamonds
+    if (cardA.suit === cardB.suit) {
+        if (cardA.numericValue() > cardB.numericValue()) {
+            return -1;
+        } else {
+            return 0;
+        }
+    } else if (cardA.suit === suits.SPADES) {
+        return -1;
+    } else if (cardA.suit === suits.HEARTS && cardB.suit != suits.SPADES) {
+        return -1;
+    } else if (cardA.suit === suits.CLUBS && cardB.suit != suits.SPADES && cardB.suit != suits.HEARTS) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
