@@ -19,7 +19,7 @@ const isPlayerTurn: RequestHandler = async (req, res, next) => {
         if (String(game.currentTurn) != userId) {
             throw new CustomError('Not your turn.', 500);
         }
-        if (game.status === gameStatus.ACTIVE) {
+        if (game.status != gameStatus.ACTIVE) {
             throw new CustomError('Game is not active!', 500);
         }
         const isValidPlayer = game.privatePlayerList.map(x => x.id).includes(userId);
