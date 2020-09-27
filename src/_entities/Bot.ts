@@ -66,7 +66,8 @@ export default class Bot {
         }
 
         if (!winningCard) {
-            return cards[0]
+            const randomCard = cards[Math.floor(Math.random() * cards.length)];
+            return randomCard;
         }
 
         const cardsOfCurrentSuit = cards.filter(c => c.suit === currentSuit)
