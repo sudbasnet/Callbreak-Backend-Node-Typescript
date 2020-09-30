@@ -42,6 +42,11 @@ const start: RequestHandler = async (req, res, next) => {
             const { arrayOfDealtCards } = Deck.dealCards(13, 4);
             for (let i = 0; i < 4; i++) {
                 game.privatePlayerList[i].cards = arrayOfDealtCards[i];
+                // reset necessary info for new round 
+                game.playerList[i].bet = 1;
+                game.playerList[i].betPlaced = false;
+                game.playerList[i].ots = 0;
+                game.playerList[i].score = 0;
             }
 
             game.end = new Date();

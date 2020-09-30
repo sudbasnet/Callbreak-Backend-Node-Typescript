@@ -53,7 +53,6 @@ const placeCard: RequestHandler = async (req, res, next) => {
 
             if (game.playerList[handWinnnerIndex].score >= game.playerList[handWinnnerIndex].bet) {
                 game.playerList[handWinnnerIndex].ots += 1;
-                console.log(`before: ${game.playerList[handWinnnerIndex].totalScore}`);
                 game.playerList[handWinnnerIndex].totalScore += 0.01;
                 game.playerList[handWinnnerIndex].totalScore = Math.round(game.playerList[handWinnnerIndex].totalScore * 100) / 100; //some problem with js addition
             } else {
@@ -70,12 +69,12 @@ const placeCard: RequestHandler = async (req, res, next) => {
                 // if last Hand of the Round (13th Hand)
                 game.playerList.forEach(p => {
                     if (p.score < p.bet) {
-                        p.score *= -1;
+                        p.totalScore += (-1 * p.bet);
                     }
                     game.gameScores.push({
                         roundNumber: game.roundNumber,
                         playerId: p.id,
-                        score: p.score
+                        score: p.score + (p.ots / 100)
                     });
                 });
 
