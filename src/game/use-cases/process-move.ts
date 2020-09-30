@@ -52,7 +52,7 @@ const placeCard: RequestHandler = async (req, res, next) => {
             const handWinnnerIndex = game.playerList.findIndex(x => String(x.id) === String(handWinnner.playedBy));
 
             if (game.playerList[handWinnnerIndex].score >= game.playerList[handWinnnerIndex].bet) {
-                game.playerList[handWinnnerIndex].score += 0.1;
+                game.playerList[handWinnnerIndex].ots += 1;
                 game.playerList[handWinnnerIndex].totalScore += 0.1;
             } else {
                 game.playerList[handWinnnerIndex].score += 1;

@@ -30,6 +30,7 @@ export interface GameSchema extends Document {
         bot: boolean,
         bet: number,
         score: number,
+        ots: number,
         totalScore: number
         betPlaced: boolean
     }[];
@@ -84,6 +85,7 @@ export const initializedPlayerListItem = (user: UserSchema) => {
         bot: user.role === 'bot' ? true : false,
         bet: 1,
         score: 0,
+        ots: 0,
         totalScore: 0,
         betPlaced: false
     };
@@ -104,6 +106,7 @@ const Game: Schema = new Schema({
                 bot: { type: Boolean, required: true },
                 bet: { type: Number, default: 0 },
                 score: { type: Number, default: 0 },
+                ots: { type: Number, default: 0 },
                 totalScore: { type: Number, default: 0 },
                 betPlaced: { type: Boolean, default: false },
             }
