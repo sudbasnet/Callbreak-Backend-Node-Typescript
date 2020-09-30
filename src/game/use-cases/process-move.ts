@@ -54,8 +54,8 @@ const placeCard: RequestHandler = async (req, res, next) => {
             if (game.playerList[handWinnnerIndex].score >= game.playerList[handWinnnerIndex].bet) {
                 game.playerList[handWinnnerIndex].ots += 1;
                 console.log(`before: ${game.playerList[handWinnnerIndex].totalScore}`);
-                game.playerList[handWinnnerIndex].totalScore += 0.1;
-                game.playerList[handWinnnerIndex].totalScore = Math.round(game.playerList[handWinnnerIndex].totalScore * 10) / 10; //some problem with js addition
+                game.playerList[handWinnnerIndex].totalScore += 0.01;
+                game.playerList[handWinnnerIndex].totalScore = Math.round(game.playerList[handWinnnerIndex].totalScore * 100) / 100; //some problem with js addition
             } else {
                 game.playerList[handWinnnerIndex].score += 1;
                 game.playerList[handWinnnerIndex].totalScore += 1;
