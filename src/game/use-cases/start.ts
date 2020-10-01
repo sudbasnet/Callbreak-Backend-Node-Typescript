@@ -25,7 +25,7 @@ const start: RequestHandler = async (req, res, next) => {
         }
 
         const playerIsHost = String(game.createdBy) === userId;
-        if (playerIsHost && game.handNumber === 1) {
+        if (playerIsHost && game.handNumber === 0) {
             if (game.roundNumber === 1) {
                 let botUserAccounts = await fetchBotUserAccounts();
                 let botUserAccount;
@@ -35,9 +35,11 @@ const start: RequestHandler = async (req, res, next) => {
                         game.addUserToGame(botUserAccount);
                     }
                 }
-                game.currentTurn = game.playerList[1].id;
                 game.status = gameStatus.ACTIVE;
             }
+
+            // betting turn
+            game.currentTurn = game.playerList[game.roundNumber % 4].id;
 
             const { arrayOfDealtCards } = Deck.dealCards(13, 4);
             for (let i = 0; i < 4; i++) {
@@ -49,6 +51,8 @@ const start: RequestHandler = async (req, res, next) => {
                 game.playerList[i].score = 0;
             }
 
+            game.cardsOnTable = [];
+            game.handNumber = 1;
             game.end = new Date();
             const savedGame = await game.save();
 

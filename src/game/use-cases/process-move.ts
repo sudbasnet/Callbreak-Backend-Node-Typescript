@@ -38,12 +38,12 @@ const placeCard: RequestHandler = async (req, res, next) => {
 
         if (game.cardsOnTable.length === 4 || game.cardsOnTable.length === 0) {
             // first card on table of new Hand
+            game.handNumber += (game.cardsOnTable.length === 0 ? 0 : 1);
             game.cardsOnTable = [];
             game.cardsOnTable.push(playedCard);
             game.currentSuit = playedCard.suit;
             game.currentWinningCard = playedCard;
             game.currentTurn = game.playerList[(playerListIndex + 1) % 4].id;
-            game.handNumber += 1;
         } else if (game.cardsOnTable.length === 3 && game.currentWinningCard && game.currentSuit) {
             // last card on table of current Hand
             game.cardsOnTable.push(playedCard);
@@ -53,11 +53,10 @@ const placeCard: RequestHandler = async (req, res, next) => {
 
             if (game.playerList[handWinnnerIndex].score >= game.playerList[handWinnnerIndex].bet) {
                 game.playerList[handWinnnerIndex].ots += 1;
-                game.playerList[handWinnnerIndex].totalScore += 0.01;
-                game.playerList[handWinnnerIndex].totalScore = Math.round(game.playerList[handWinnnerIndex].totalScore * 100) / 100; //some problem with js addition
+                game.playerList[handWinnnerIndex].score += 0.01;
+                game.playerList[handWinnnerIndex].score = Math.round(game.playerList[handWinnnerIndex].score * 100) / 100; //some problem with js addition
             } else {
                 game.playerList[handWinnnerIndex].score += 1;
-                game.playerList[handWinnnerIndex].totalScore += 1;
             }
 
             game.overriddenBySpade = false;
@@ -70,18 +69,21 @@ const placeCard: RequestHandler = async (req, res, next) => {
                 game.playerList.forEach(p => {
                     if (p.score < p.bet) {
                         p.totalScore += (-1 * p.bet);
+                    } else {
+                        p.totalScore += p.score;
                     }
+                    p.totalScore = Math.round(p.totalScore * 100) / 100;
                     game.gameScores.push({
                         roundNumber: game.roundNumber,
                         playerId: p.id,
-                        score: p.score + (p.ots / 100)
+                        score: p.score
                     });
                 });
 
                 game.roundNumber += (game.roundNumber < 5) ? 1 : 0;
-                game.handNumber = 1;
                 game.playedHands = [];
                 game.currentTurn = game.playerList[(game.roundNumber - 1) % 4].id;
+                game.handNumber = 0;
             } else {
                 game.currentTurn = handWinnner.playedBy;
             }

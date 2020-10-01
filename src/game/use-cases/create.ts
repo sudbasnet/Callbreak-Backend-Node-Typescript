@@ -26,7 +26,7 @@ const create: RequestHandler = async (req, res, next) => {
             const game = new Game({
                 status: gameStatus.WAITING,
                 createdBy: user._id,
-                handNumber: 1,
+                handNumber: 0,
                 roundNumber: 1,
                 playerList: [initializedPlayerListItem(user)],
                 gameScores: [initializedGameScoresItem(user._id)],
