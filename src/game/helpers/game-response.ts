@@ -1,6 +1,6 @@
-import { GameSchema } from '../game/game.model';
+import { IGameSchema } from '../game.model';
 
-export default (userId: string, game: GameSchema) => {
+export default (userId: string, game: IGameSchema) => {
     const i = game.privatePlayerList.findIndex(p => String(p.id) === userId);
     const player = game.privatePlayerList[i];
     const global = {

@@ -1,8 +1,9 @@
-import Game, { GameSchema } from '../game.model';
+import Game from '../game.model';
 import { RequestHandler } from 'express';
-import CustomError from '../../_helpers/custom-error';
-import Deck, { Card, suits } from '../../_entities/Deck';
-import gameResponse from '../../_helpers/game-response';
+import CustomError from '../../lib/classes/CustomError';
+import gameResponse from '../helpers/game-response';
+import Card from '../../lib/classes/Card';
+import Deck from '../../lib/classes/Deck';
 
 
 const placeCard: RequestHandler = async (req, res, next) => {

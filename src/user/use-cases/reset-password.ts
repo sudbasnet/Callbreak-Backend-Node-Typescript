@@ -4,7 +4,7 @@ import User from '../user.model';
 
 import bcrypt from 'bcryptjs';
 
-import CustomError from '../../_helpers/custom-error';
+import CustomError from '../../lib/classes/CustomError';
 
 // POST localhost:xxxx/user/{userId}/reset/{reset_code}
 const resetPassword: RequestHandler = async (req, res, next) => {

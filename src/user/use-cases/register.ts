@@ -1,5 +1,5 @@
 import User from '../user.model';
-import CustomError from '../../_helpers/custom-error';
+import CustomError from '../../lib/classes/CustomError';
 
 import { RequestHandler } from 'express';
 import bcrypt from 'bcryptjs';
@@ -19,7 +19,7 @@ const register: RequestHandler = async (req, res, next) => {
             active: true // remove this in production
         });
         const savedUser = await newUser.save();
-        req.params.userId = savedUser._id;
+        req.params.userId = String(savedUser._id);
         next();
     }
     catch (err) {

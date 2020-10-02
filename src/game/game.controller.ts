@@ -8,8 +8,8 @@ import botBet from './use-cases/bot/request-bet';
 import botMove from './use-cases/bot/request-move';
 import processMove from './use-cases/process-move';
 
-import checkBotTurn from '../_middlewares/check-bot-turn';
-import checkPlayerTurn from '../_middlewares/check-player-turn';
+import checkBotTurn from '../middlewares/check-bot-turn';
+import checkPlayerTurn from '../middlewares/check-player-turn';
 
 export default {
     create,

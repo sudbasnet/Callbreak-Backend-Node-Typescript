@@ -1,8 +1,9 @@
 // allows to cancel a game that has not been started
-import Game, { gameStatus } from '../game.model';
-import User, { UserSchema } from '../../user/user.model';
+import Game from '../game.model';
+import User from '../../user/user.model';
 import { RequestHandler } from 'express';
-import CustomError from '../../_helpers/custom-error';
+import CustomError from '../../lib/classes/CustomError';
+import { gameStatus } from '../../lib/enums/enums';
 
 const cancel: RequestHandler = async (req, res, next) => {
     const userId = req.userId;

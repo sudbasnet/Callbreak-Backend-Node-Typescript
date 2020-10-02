@@ -1,8 +1,8 @@
 import Game from '../game.model';
 import User from '../../user/user.model';
 import { RequestHandler } from 'express';
-import CustomError from '../../_helpers/custom-error';
-import gameResponse from '../../_helpers/game-response';
+import CustomError from '../../lib/classes/CustomError';
+import gameResponse from '../helpers/game-response';
 
 const join: RequestHandler = async (req, res, next) => {
     const userId = req.userId;

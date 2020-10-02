@@ -1,5 +1,5 @@
 import { body } from 'express-validator';
-import CustomError from '../_helpers/custom-error';
+import CustomError from '../lib/classes/CustomError';
 
 export default
     [

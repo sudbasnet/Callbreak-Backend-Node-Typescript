@@ -2,7 +2,7 @@ import { body } from 'express-validator';
 
 import User from '../user/user.model';
 
-import CustomError from '../_helpers/custom-error';
+import CustomError from '../lib/classes/CustomError';
 
 export default
     [

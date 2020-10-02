@@ -1,4 +1,6 @@
-export default interface EmailData {
+import { EEmailTokenType } from "../enums/enums";
+
+export default interface IEmailData {
     sender: string;
     recipientId: string;
     recipientEmail?: string;
@@ -6,7 +8,6 @@ export default interface EmailData {
     htmlBody: string;
     link?: string;
     linkText?: string;
-    tokenType?: TokenType;
+    tokenType?: EEmailTokenType;
 };
 
-export enum TokenType { PASSWORD_RESET = 'password', ACCOUNT_VERIFICATION = 'account' };

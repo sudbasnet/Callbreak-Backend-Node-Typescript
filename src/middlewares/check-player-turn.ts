@@ -1,6 +1,7 @@
-import Game, { gameStatus } from '../game/game.model';
+import Game from '../game/game.model';
 import { RequestHandler } from 'express';
-import CustomError from '../_helpers/custom-error';
+import CustomError from '../lib/classes/CustomError';
+import { gameStatus } from '../lib/enums/enums';
 
 const isPlayerTurn: RequestHandler = async (req, res, next) => {
     const userId = req.userId;

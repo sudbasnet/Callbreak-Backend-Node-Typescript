@@ -1,5 +1,5 @@
 import User from '../user.model';
-import CustomError from '../../_helpers/custom-error';
+import CustomError from '../../lib/classes/CustomError';
 
 import { RequestHandler } from 'express';
 import bcrypt from 'bcryptjs';

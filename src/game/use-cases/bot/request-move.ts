@@ -1,10 +1,8 @@
-import Game, { gameStatus } from '../../game.model';
-import CustomError from '../../../_helpers/custom-error';
+import Game from '../../game.model';
+import CustomError from '../../../lib/classes/CustomError';
 import { RequestHandler } from 'express';
-import gameResponse from '../../../_helpers/game-response';
-import Bot from '../../../_entities/Bot';
-import placeCard from '../process-move';
-import Deck, { suits } from '../../../_entities/Deck';
+import CallbreakBot from '../../../lib/classes/CallbreakBot';
+import ICard from '../../../lib/interfaces/ICard';
 
 const botMove: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -23,9 +21,9 @@ const botMove: RequestHandler = async (req, res, next) => {
 
         // Bot.makeMove()
         const privatePlayersIndex = game.privatePlayerList.findIndex(x => String(x.id) === botId);
-        const botCards = game.privatePlayerList[privatePlayersIndex].cards || [];
+        const botCards: ICard[] = game.privatePlayerList[privatePlayersIndex].cards || [];
 
-        let playedCard = Bot.makeMove(botCards, String(game.currentSuit), game.currentWinningCard || null);
+        let playedCard = CallbreakBot.makeMove(botCards, String(game.currentSuit), game.currentWinningCard || null);
 
         req.body.suit = playedCard.suit;
         req.body.value = playedCard.value;

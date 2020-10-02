@@ -1,8 +1,9 @@
-import Game, { gameStatus } from '../../game.model';
-import CustomError from '../../../_helpers/custom-error';
+import Game from '../../game.model';
+import CustomError from '../../../lib/classes/CustomError';
 import { RequestHandler } from 'express';
-import gameResponse from '../../../_helpers/game-response';
-import Bot from '../../../_entities/Bot';
+import gameResponse from '../../helpers/game-response';
+import CallbreakBot from '../../../lib/classes/CallbreakBot';
+import ICard from '../../../lib/interfaces/ICard';
 
 const bet: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -19,16 +20,16 @@ const bet: RequestHandler = async (req, res, next) => {
             throw new CustomError('The game does not exist!', 404);
         }
 
-        let botIndexPlayers = game.privatePlayerList.findIndex(x => String(x.id) === botId)
-        const botCardsJson = game.privatePlayerList[botIndexPlayers].cards || []
-        let bet = Bot.betFromAvailableCards(botCardsJson)
+        const i = game.privatePlayerList.findIndex(x => String(x.id) === botId);
+        const botCards: ICard[] = game.privatePlayerList[i].cards || [];
+        const bet = CallbreakBot.betFromAvailableCards(botCards);
 
-        let botIndexPlayerList = game.playerList.findIndex(x => String(x.id) === botId)
-        if (game.playerList[botIndexPlayerList].betPlaced) {
+        const j = game.playerList.findIndex(x => String(x.id) === botId)
+        if (game.playerList[j].betPlaced) {
             throw new CustomError('Bet cannot be placed more than once!', 500);
         }
-        game.playerList[botIndexPlayerList].bet = bet;
-        game.playerList[botIndexPlayerList].betPlaced = true
+        game.playerList[j].bet = bet;
+        game.playerList[j].betPlaced = true
         // change the current turn to the next player
 
         // check if everyone has placed their bets
@@ -36,7 +37,7 @@ const bet: RequestHandler = async (req, res, next) => {
         if (allBetsPlaced) {
             game.currentTurn = game.playerList[(game.roundNumber - 1) % 4].id;
         } else {
-            game.currentTurn = game.playerList[(botIndexPlayerList + 1) % 4].id;
+            game.currentTurn = game.playerList[(j + 1) % 4].id;
         }
 
         const savedGame = await game.save();

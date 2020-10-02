@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 
 import User from '../user.model';
 
-import CustomError from '../../_helpers/custom-error';
+import CustomError from '../../lib/classes/CustomError';
 
 import bcrypt from 'bcryptjs';
 

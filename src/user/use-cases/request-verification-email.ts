@@ -1,14 +1,15 @@
 import { RequestHandler } from 'express';
-import sendgridEmail from '../../_helpers/sendgrid-token-email';
-import EmailData, { TokenType } from '../../_entities/EmailData';
+import { EEmailTokenType } from '../../lib/enums/enums';
+import IEmailData from '../../lib/interfaces/IEmailData';
+import sendgridEmail from '../../helpers/sendgrid-token-email';
 
 // GET: localhost:xxxx/user/{userId}/request-verification-email
 const requestVerificationEmail: RequestHandler = async (req, res, next) => {
     const userId = req.params.userId;
 
-    const userData: EmailData = {
+    const userData: IEmailData = {
         sender: 'restapi201@gmail.com',
-        tokenType: TokenType.ACCOUNT_VERIFICATION,
+        tokenType: EEmailTokenType.ACCOUNT_VERIFICATION,
         recipientId: userId,
         subject: 'Cardgames Registration',
         htmlBody: '<h1>To complete registration, please click on link below</h1>',

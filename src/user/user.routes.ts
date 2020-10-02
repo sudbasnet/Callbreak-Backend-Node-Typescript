@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
 import userController from './user.controller';
-import authenticationVerification from '../_middlewares/authentication-verification';
-import registrationDataValidation from '../_middlewares/registration-data-validation';
-import updatedPasswordValidation from '../_middlewares/updated-password-validation';
+import authenticationVerification from '../middlewares/authentication-verification';
+import registrationDataValidation from '../middlewares/registration-data-validation';
+import updatedPasswordValidation from '../middlewares/updated-password-validation';
 
 const router = Router();
 

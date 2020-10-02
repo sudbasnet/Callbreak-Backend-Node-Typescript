@@ -5,8 +5,8 @@ import * as dotenv from 'dotenv';
 import socketIO from './socket';
 
 //Import Middlewares
-import errorHandler from './_middlewares/error-handler';
-import verifyAuthentication from './_middlewares/authentication-verification';
+import errorHandler from './middlewares/error-handler';
+import verifyAuthentication from './middlewares/authentication-verification';
 
 // Import Routes
 import userRoutes from './user/user.routes';

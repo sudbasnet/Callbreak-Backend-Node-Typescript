@@ -1,9 +1,10 @@
-import Game, { gameStatus } from '../game.model';
-import User, { UserSchema } from '../../user/user.model';
-import Deck from '../../_entities/Deck';
-import CustomError from '../../_helpers/custom-error';
+import Game from '../game.model';
+import User from '../../user/user.model';
+import CustomError from '../../lib/classes/CustomError';
 import { RequestHandler } from 'express';
-import gameResponse from '../../_helpers/game-response';
+import gameResponse from '../helpers/game-response';
+import Deck from '../../lib/classes/Deck';
+import { gameStatus } from '../../lib/enums/enums';
 
 const fetchBotUserAccounts = async () => {
     const botUserAccounts = await User.find({ role: 'bot' });

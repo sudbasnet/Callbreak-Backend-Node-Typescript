@@ -1,97 +1,14 @@
 import { model, Schema, Document } from 'mongoose';
-import { UserSchema } from '../user/user.model';
-import { Card, suits } from '../_entities/Deck';
+import IGameModel from '../lib/interfaces/IGameModel';
+import { initializedGameScoresItem, initializedPlayerListItem, initializedPrivatePlayerListItem } from '../lib/interfaces/IGameModel';
+import { IUserModel } from '../lib/interfaces/IUserModel';
 
-export const enum gameStatus {
-    "WAITING" = "waiting",
-    "JOINING" = "joining",
-    "ACTIVE" = "active",
-    "INACTIVE" = "inactive"
-};
+type mongooseIdType = string | Schema.Types.ObjectId;
+export interface IGameSchema extends IGameModel<mongooseIdType, mongooseIdType>, Document {
+    _id: mongooseIdType;
+}
 
-export interface PrivatePlayerList {
-    id: UserSchema['_id'];
-    name?: string;
-    bot: boolean;
-    cards: Card[];
-    possibleMoves: Card[];
-};
-
-export interface GameSchema extends Document {
-    status: string;
-    createdBy: UserSchema['_id'];
-
-    roundNumber: number;
-    handNumber: number;
-
-    playerList: {
-        id: UserSchema['_id'],
-        name: string,
-        bot: boolean,
-        bet: number,
-        score: number,
-        ots: number,
-        totalScore: number
-        betPlaced: boolean
-    }[];
-
-    gameScores: {
-        roundNumber: number,
-        playerId: UserSchema['_id'],
-        score: number
-    }[];
-
-    playedHands: Card[][];
-
-    cardsOnTable: Card[];
-    currentTurn: UserSchema['_id'];
-
-    currentSuit?: suits;
-    currentWinningCard?: Card;
-    overriddenBySpade: boolean;
-
-    gameType: string;
-    start: Date;
-    end?: Date;
-
-    privatePlayerList: PrivatePlayerList[];
-
-    addUserToGame(user: UserSchema): void;
-};
-
-
-export const initializedPrivatePlayerListItem = (user: UserSchema) => {
-    return {
-        id: user._id,
-        name: user.name,
-        bot: user.role === 'bot' ? true : false,
-        cards: [],
-        possibleMoves: []
-    };
-};
-
-export const initializedGameScoresItem = (userId: string) => {
-    return {
-        roundNumber: 1,
-        playerId: userId,
-        score: 0
-    };
-};
-
-export const initializedPlayerListItem = (user: UserSchema) => {
-    return {
-        id: user._id,
-        name: user.name,
-        bot: user.role === 'bot' ? true : false,
-        bet: 1,
-        score: 0,
-        ots: 0,
-        totalScore: 0,
-        betPlaced: false
-    };
-};
-
-const Game: Schema = new Schema({
+const GameSchema: Schema = new Schema({
     status: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
 
@@ -151,14 +68,14 @@ const Game: Schema = new Schema({
     }
 });
 
-Game.methods = {
-    addUserToGame(user: UserSchema) {
+GameSchema.methods = {
+    addUserToGame(user: IUserModel<mongooseIdType>) {
         this.playerList.push(initializedPlayerListItem(user));
         this.privatePlayerList.push(initializedPrivatePlayerListItem(user));
         this.gameScores.push(initializedGameScoresItem(user._id));
     }
 };
 
-Game.statics = {};
+GameSchema.statics = {};
 
-export default model<GameSchema>('Game', Game);
+export default model<IGameSchema>('Game', GameSchema);

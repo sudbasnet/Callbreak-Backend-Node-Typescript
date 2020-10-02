@@ -2,16 +2,18 @@ import nodemailer from 'nodemailer';
 import nodemailerSendgrid from 'nodemailer-sendgrid';
 import crypto from 'crypto';
 
-import User, { Token } from '../user/user.model';
-import CustomError from './custom-error';
-import EmailData, { TokenType } from '../_entities/EmailData';
+import User from '../user/user.model';
+import CustomError from '../lib/classes/CustomError';
+import IEmailData from '../lib/interfaces/IEmailData';
+import { EEmailTokenType } from '../lib/enums/enums';
+import { IToken } from '../lib/interfaces/IUserModel';
 
 const emailTransporter = nodemailer.createTransport(
     nodemailerSendgrid({
         apiKey: process.env.SENDGRID_API_KEY as string
     }));
 
-const sendgridEmail = async (emailData: EmailData) => {
+const sendgridEmail = async (emailData: IEmailData) => {
     try {
         crypto.randomBytes(32,
             async (err, buffer) => {
@@ -23,12 +25,12 @@ const sendgridEmail = async (emailData: EmailData) => {
                     if (!user) {
                         throw new CustomError('User does not exist', 404);
                     }
-                    const token: Token = { token: buffer.toString('hex'), expires: new Date(Date.now() + 3600000) }
+                    const token: IToken = { token: buffer.toString('hex'), expires: new Date(Date.now() + 3600000) }
 
-                    if (emailData.tokenType === TokenType.PASSWORD_RESET) {
+                    if (emailData.tokenType === EEmailTokenType.PASSWORD_RESET) {
                         user.passwordReset = token;
                         await user.save();
-                    } else if (emailData.tokenType === TokenType.ACCOUNT_VERIFICATION) {
+                    } else if (emailData.tokenType === EEmailTokenType.ACCOUNT_VERIFICATION) {
                         user.verification = token;
                         await user.save();
                     }

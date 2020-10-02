@@ -1,8 +1,9 @@
 import { RequestHandler } from "express";
-import EmailData, { TokenType } from '../../_entities/EmailData';
-import sendgridEmail from '../../_helpers/sendgrid-token-email';
+import sendgridEmail from '../../helpers/sendgrid-token-email';
 import User from '../user.model';
-import CustomError from '../../_helpers/custom-error';
+import CustomError from '../../lib/classes/CustomError';
+import IEmailData from "../../lib/interfaces/IEmailData";
+import { EEmailTokenType } from "../../lib/enums/enums";
 
 // should be a get request ??
 const requestPasswordReset: RequestHandler = async (req, res, next) => {
@@ -13,10 +14,10 @@ const requestPasswordReset: RequestHandler = async (req, res, next) => {
         throw new CustomError('User with that email does not exist', 404);
     }
 
-    const userData: EmailData = {
+    const userData: IEmailData = {
         sender: 'restapi201@gmail.com',
-        tokenType: TokenType.PASSWORD_RESET,
-        recipientId: user._id,
+        tokenType: EEmailTokenType.PASSWORD_RESET,
+        recipientId: String(user._id),
         subject: 'Cardgames - Password Reset',
         htmlBody: '<h1>To reset your password, please click on link below</h1>',
         link: `http://localhost:` + process.env.PORT + `/user/` + user._id + `/password_reset/`,
