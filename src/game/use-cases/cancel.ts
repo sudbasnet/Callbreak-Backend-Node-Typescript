@@ -2,8 +2,8 @@
 import Game from '../game.model';
 import User from '../../user/user.model';
 import { RequestHandler } from 'express';
-import CustomError from '../../lib/classes/CustomError';
-import { gameStatus } from '../../lib/enums/enums';
+import CustomError from '../../entities/classes/CustomError';
+import { gameStatus } from '../../entities/enums/enums';
 
 const cancel: RequestHandler = async (req, res, next) => {
     const userId = req.userId;

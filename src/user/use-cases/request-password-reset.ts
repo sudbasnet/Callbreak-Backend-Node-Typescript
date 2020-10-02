@@ -1,9 +1,9 @@
 import { RequestHandler } from "express";
 import sendgridEmail from '../../helpers/sendgrid-token-email';
 import User from '../user.model';
-import CustomError from '../../lib/classes/CustomError';
-import IEmailData from "../../lib/interfaces/IEmailData";
-import { EEmailTokenType } from "../../lib/enums/enums";
+import CustomError from '../../entities/classes/CustomError';
+import IEmailData from "../../entities/interfaces/IEmailData";
+import { EEmailTokenType } from "../../entities/enums/enums";
 
 // should be a get request ??
 const requestPasswordReset: RequestHandler = async (req, res, next) => {

@@ -1,5 +1,5 @@
 import Game from '../game.model';
-import CustomError from '../../lib/classes/CustomError';
+import CustomError from '../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
 import gameResponse from '../helpers/game-response';
 

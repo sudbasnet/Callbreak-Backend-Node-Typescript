@@ -1,11 +1,11 @@
 import Game, { IGameSchema } from '../game.model';
 import { RequestHandler } from 'express';
 import User from '../../user/user.model';
-import CustomError from '../../lib/classes/CustomError';
+import CustomError from '../../entities/classes/CustomError';
 import gameResponse from '../helpers/game-response';
-import ICard from '../../lib/interfaces/ICard';
-import { ESuits, gameStatus } from '../../lib/enums/enums';
-import Deck from '../../lib/classes/Deck';
+import ICard from '../../entities/interfaces/ICard';
+import { ESuits, gameStatus } from '../../entities/enums/enums';
+import Deck from '../../entities/classes/Deck';
 
 
 const gameData: RequestHandler = async (req, res, next) => {

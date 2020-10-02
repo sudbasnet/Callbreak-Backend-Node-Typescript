@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
-import { EEmailTokenType } from '../../lib/enums/enums';
-import IEmailData from '../../lib/interfaces/IEmailData';
+import { EEmailTokenType } from '../../entities/enums/enums';
+import IEmailData from '../../entities/interfaces/IEmailData';
 import sendgridEmail from '../../helpers/sendgrid-token-email';
 
 // GET: localhost:xxxx/user/{userId}/request-verification-email

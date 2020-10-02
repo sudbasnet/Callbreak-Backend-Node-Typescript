@@ -1,10 +1,10 @@
 import Game from '../game.model';
 import { RequestHandler } from 'express';
 import User from '../../user/user.model';
-import CustomError from '../../lib/classes/CustomError';
+import CustomError from '../../entities/classes/CustomError';
 import gameResponse from '../helpers/game-response';
-import { gameStatus } from '../../lib/enums/enums';
-import { initializedGameScoresItem, initializedPlayerListItem, initializedPrivatePlayerListItem } from '../../lib/interfaces/IGameModel';
+import { gameStatus } from '../../entities/enums/enums';
+import { initializedGameScoresItem, initializedPlayerListItem, initializedPrivatePlayerListItem } from '../../entities/interfaces/IGameModel';
 
 const create: RequestHandler = async (req, res, next) => {
     const userId = req.userId;

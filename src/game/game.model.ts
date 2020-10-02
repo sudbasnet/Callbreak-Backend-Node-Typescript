@@ -1,7 +1,7 @@
 import { model, Schema, Document } from 'mongoose';
-import IGameModel from '../lib/interfaces/IGameModel';
-import { initializedGameScoresItem, initializedPlayerListItem, initializedPrivatePlayerListItem } from '../lib/interfaces/IGameModel';
-import { IUserModel } from '../lib/interfaces/IUserModel';
+import IGameModel from '../entities/interfaces/IGameModel';
+import { initializedGameScoresItem, initializedPlayerListItem, initializedPrivatePlayerListItem } from '../entities/interfaces/IGameModel';
+import { IUserModel } from '../entities/interfaces/IUserModel';
 
 type mongooseIdType = string | Schema.Types.ObjectId;
 export interface IGameSchema extends IGameModel<mongooseIdType, mongooseIdType>, Document {

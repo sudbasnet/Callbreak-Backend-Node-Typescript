@@ -1,6 +1,6 @@
 import User from '../user.model';
 
-import CustomError from '../../lib/classes/CustomError';
+import CustomError from '../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
 
 // GET: http://localhost:xxxxx/user/delete_account

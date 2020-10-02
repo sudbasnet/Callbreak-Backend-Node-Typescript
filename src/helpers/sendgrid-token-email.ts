@@ -3,10 +3,10 @@ import nodemailerSendgrid from 'nodemailer-sendgrid';
 import crypto from 'crypto';
 
 import User from '../user/user.model';
-import CustomError from '../lib/classes/CustomError';
-import IEmailData from '../lib/interfaces/IEmailData';
-import { EEmailTokenType } from '../lib/enums/enums';
-import { IToken } from '../lib/interfaces/IUserModel';
+import CustomError from '../entities/classes/CustomError';
+import IEmailData from '../entities/interfaces/IEmailData';
+import { EEmailTokenType } from '../entities/enums/enums';
+import { IToken } from '../entities/interfaces/IUserModel';
 
 const emailTransporter = nodemailer.createTransport(
     nodemailerSendgrid({

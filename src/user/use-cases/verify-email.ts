@@ -1,6 +1,6 @@
 import User from '../user.model';
 
-import CustomError from '../../lib/classes/CustomError';
+import CustomError from '../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
 
 // localhost:xxxx/user/{userId}/verify/{verification_code}

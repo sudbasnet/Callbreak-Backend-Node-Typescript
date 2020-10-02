@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
-import { EUserRoles } from '../lib/enums/enums';
-import { IUserModel } from '../lib/interfaces/IUserModel';
+import { EUserRoles } from '../entities/enums/enums';
+import { IUserModel } from '../entities/interfaces/IUserModel';
 
 type mongooseIdType = string | Schema.Types.ObjectId;
 export interface IUserSchema extends IUserModel<mongooseIdType>, Document {

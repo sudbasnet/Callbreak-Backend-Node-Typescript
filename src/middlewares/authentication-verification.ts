@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 
 import jwt from 'jsonwebtoken';
 
-import CustomError from '../lib/classes/CustomError';
+import CustomError from '../entities/classes/CustomError';
 
 const verifyAuthentication: RequestHandler = (req, res, next) => {
     const authorizationHeader = req.get('Authorization');
