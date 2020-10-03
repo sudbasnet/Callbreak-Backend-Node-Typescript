@@ -1,7 +1,7 @@
 import Game from '../game.model';
 import CustomError from '../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
-import gameResponse from '../helpers/game-response';
+import gameResponse from '../../helpers/game-response';
 
 const bet: RequestHandler = async (req, res, next) => {
     const userId = req.userId;

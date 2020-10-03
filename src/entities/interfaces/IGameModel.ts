@@ -47,6 +47,8 @@ export default interface IGameModel<gameIdType, userIdType> {
     privatePlayerList: IPrivatePlayer<userIdType>[];
 
     addUserToGame(user: IUserModel<userIdType>): void;
+
+    findById(_id: string): Promise<IGameModel<gameIdType, userIdType>>;
 };
 
 export function initializedPrivatePlayerListItem<T>(user: IUserModel<T>) {

@@ -2,8 +2,8 @@ import Game from '../game.model';
 import { RequestHandler } from 'express';
 import User from '../../user/user.model';
 import CustomError from '../../entities/classes/CustomError';
-import gameResponse from '../helpers/game-response';
-import { gameStatus } from '../../entities/enums/enums';
+import gameResponse from '../../helpers/game-response';
+import { EGameStatus } from '../../entities/enums/enums';
 import { initializedGameScoresItem, initializedPlayerListItem, initializedPrivatePlayerListItem } from '../../entities/interfaces/IGameModel';
 
 const create: RequestHandler = async (req, res, next) => {
@@ -21,12 +21,12 @@ const create: RequestHandler = async (req, res, next) => {
         }
 
         // if the player has already created a game, then return the existing game
-        const incompleteGame = await Game.findOne({ createdBy: userId, status: { $ne: gameStatus.INACTIVE } });
+        const incompleteGame = await Game.findOne({ createdBy: userId, status: { $ne: EGameStatus.INACTIVE } });
         if (incompleteGame) {
             res.status(200).json(gameResponse(userId, incompleteGame));
         } else {
             const game = new Game({
-                status: gameStatus.WAITING,
+                status: EGameStatus.WAITING,
                 createdBy: user._id,
                 handNumber: 0,
                 roundNumber: 1,

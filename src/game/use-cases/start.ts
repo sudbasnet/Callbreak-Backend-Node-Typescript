@@ -2,9 +2,9 @@ import Game from '../game.model';
 import User from '../../user/user.model';
 import CustomError from '../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
-import gameResponse from '../helpers/game-response';
+import gameResponse from '../../helpers/game-response';
 import Deck from '../../entities/classes/Deck';
-import { gameStatus } from '../../entities/enums/enums';
+import { EGameStatus } from '../../entities/enums/enums';
 
 const fetchBotUserAccounts = async () => {
     const botUserAccounts = await User.find({ role: 'bot' });
@@ -36,7 +36,7 @@ const start: RequestHandler = async (req, res, next) => {
                         game.addUserToGame(botUserAccount);
                     }
                 }
-                game.status = gameStatus.ACTIVE;
+                game.status = EGameStatus.ACTIVE;
             }
 
             // betting turn

@@ -1,7 +1,7 @@
 import Game from '../game/game.model';
 import CustomError from '../entities/classes/CustomError';
 import { RequestHandler } from 'express';
-import { gameStatus } from '../entities/enums/enums';
+import { EGameStatus } from '../entities/enums/enums';
 
 const isBotTurn: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -23,7 +23,7 @@ const isBotTurn: RequestHandler = async (req, res, next) => {
         if (String(game.currentTurn) != botId) {
             throw new CustomError('Not bot turn to play!', 500);
         }
-        if (game.status != gameStatus.ACTIVE) {
+        if (game.status != EGameStatus.ACTIVE) {
             throw new CustomError('Game is not active!', 500);
         }
         next();

@@ -5,8 +5,8 @@ import * as dotenv from 'dotenv';
 import socketIO from './socket';
 
 //Import Middlewares
-import errorHandler from './middlewares/error-handler';
-import verifyAuthentication from './middlewares/authentication-verification';
+import handleError from './services/handle-error';
+import verifyAuthentication from './services/verify-authentication';
 
 // Import Routes
 import userRoutes from './user/user.routes';
@@ -29,7 +29,7 @@ app.get('/', (req, res, next) => {
     res.send({ message: 'Default route' });
 });
 
-app.use(errorHandler);
+app.use(handleError);
 
 // Database Connection
 const DB_CONNECTION = process.env.DB_CONNECTION as string;

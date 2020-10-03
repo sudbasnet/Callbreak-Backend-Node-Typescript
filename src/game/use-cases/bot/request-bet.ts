@@ -1,7 +1,7 @@
 import Game from '../../game.model';
 import CustomError from '../../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
-import gameResponse from '../../helpers/game-response';
+import gameResponse from '../../../helpers/game-response';
 import CallbreakBot from '../../../entities/classes/CallbreakBot';
 import ICard from '../../../entities/interfaces/ICard';
 

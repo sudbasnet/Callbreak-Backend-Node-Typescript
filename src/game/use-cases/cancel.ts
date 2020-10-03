@@ -3,7 +3,7 @@ import Game from '../game.model';
 import User from '../../user/user.model';
 import { RequestHandler } from 'express';
 import CustomError from '../../entities/classes/CustomError';
-import { gameStatus } from '../../entities/enums/enums';
+import { EGameStatus } from '../../entities/enums/enums';
 
 const cancel: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -33,7 +33,7 @@ const cancel: RequestHandler = async (req, res, next) => {
             res.status(201).json({ message: gameType + ' game ' + gameId + ' has been deleted.' });
         } else {
             // delete player if not creator
-            if (game.status === gameStatus.ACTIVE) {
+            if (game.status === EGameStatus.ACTIVE) {
                 const playersIndex = game.privatePlayerList.findIndex(p => String(p.id) === String(userId));
                 const playerListIndex = game.playerList.findIndex(p => String(p.id) === String(userId));
 

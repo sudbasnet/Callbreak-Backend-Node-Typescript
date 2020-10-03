@@ -1,4 +1,4 @@
-import { IGameSchema } from '../game.model';
+import { IGameSchema } from '../game/game.model';
 
 export default (userId: string, game: IGameSchema) => {
     const i = game.privatePlayerList.findIndex(p => String(p.id) === userId);

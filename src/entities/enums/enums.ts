@@ -22,7 +22,7 @@ export enum EEmailTokenType {
     ACCOUNT_VERIFICATION = 'account'
 };
 
-export const enum gameStatus {
+export const enum EGameStatus {
     "WAITING" = "waiting",
     "JOINING" = "joining",
     "ACTIVE" = "active",

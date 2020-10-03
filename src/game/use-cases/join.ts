@@ -2,7 +2,7 @@ import Game from '../game.model';
 import User from '../../user/user.model';
 import { RequestHandler } from 'express';
 import CustomError from '../../entities/classes/CustomError';
-import gameResponse from '../helpers/game-response';
+import gameResponse from '../../helpers/game-response';
 
 const join: RequestHandler = async (req, res, next) => {
     const userId = req.userId;

@@ -2,9 +2,9 @@ import Game, { IGameSchema } from '../game.model';
 import { RequestHandler } from 'express';
 import User from '../../user/user.model';
 import CustomError from '../../entities/classes/CustomError';
-import gameResponse from '../helpers/game-response';
+import gameResponse from '../../helpers/game-response';
 import ICard from '../../entities/interfaces/ICard';
-import { ESuits, gameStatus } from '../../entities/enums/enums';
+import { ESuits, EGameStatus } from '../../entities/enums/enums';
 import Deck from '../../entities/classes/Deck';
 
 
@@ -21,7 +21,7 @@ const gameData: RequestHandler = async (req, res, next) => {
         }
 
         let game: IGameSchema;
-        const allActiveGames = await Game.find({ status: { $ne: gameStatus.INACTIVE } });
+        const allActiveGames = await Game.find({ status: { $ne: EGameStatus.INACTIVE } });
         const gamesWithUser = allActiveGames.filter(g => g.playerList.map(p => String(p.id)).includes(userId));
         if (gamesWithUser.length > 0) {
             game = gamesWithUser[0];

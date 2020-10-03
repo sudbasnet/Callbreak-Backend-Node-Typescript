@@ -1,7 +1,7 @@
 import Game from '../game/game.model';
 import { RequestHandler } from 'express';
 import CustomError from '../entities/classes/CustomError';
-import { gameStatus } from '../entities/enums/enums';
+import { EGameStatus } from '../entities/enums/enums';
 
 const isPlayerTurn: RequestHandler = async (req, res, next) => {
     const userId = req.userId;
@@ -20,7 +20,7 @@ const isPlayerTurn: RequestHandler = async (req, res, next) => {
         if (String(game.currentTurn) != userId) {
             throw new CustomError('Not your turn.', 500);
         }
-        if (game.status != gameStatus.ACTIVE) {
+        if (game.status != EGameStatus.ACTIVE) {
             throw new CustomError('Game is not active!', 500);
         }
         const isValidPlayer = game.privatePlayerList.map(x => x.id).includes(userId);
