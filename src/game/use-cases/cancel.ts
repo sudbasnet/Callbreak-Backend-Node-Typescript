@@ -1,11 +1,13 @@
 // allows to cancel a game that has not been started
-import Game from '../game.model';
-import User from '../../user/user.model';
+import { GameRepository } from '../../repositories/GameRepository';
+import { UserRepository } from '../../repositories/UserRepository';
 import { RequestHandler } from 'express';
 import CustomError from '../../entities/classes/CustomError';
 import { EGameStatus } from '../../entities/enums/enums';
 
 const cancel: RequestHandler = async (req, res, next) => {
+    const Game = new GameRepository();
+    const User = new UserRepository();
     const userId = req.userId;
     const userName = req.userName;
     const gameId = req.body.gameId;
@@ -57,11 +59,11 @@ const cancel: RequestHandler = async (req, res, next) => {
                         break;
                     }
                 }
-                await game.save();
+                await Game.save(game);
             } else {
                 game.privatePlayerList = game.privatePlayerList.filter(p => String(p.id) != userId);
                 game.playerList = game.playerList.filter(p => String(p.id) != userId);
-                await game.save();
+                await Game.save(game);
             }
             res.status(201).json({ message: userName + ' has left the game.' });
         }

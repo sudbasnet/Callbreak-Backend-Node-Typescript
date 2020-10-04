@@ -1,4 +1,4 @@
-import Game from '../../game.model';
+import { GameRepository } from '../../../repositories/GameRepository';
 import CustomError from '../../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
 import gameResponse from '../../../helpers/game-response';
@@ -6,6 +6,7 @@ import CallbreakBot from '../../../entities/classes/CallbreakBot';
 import ICard from '../../../entities/interfaces/ICard';
 
 const bet: RequestHandler = async (req, res, next) => {
+    const Game = new GameRepository();
     const userId = req.userId;
     const gameId = req.params.gameId;
     const botId = req.params.botId;

@@ -1,6 +1,9 @@
-import { IGameSchema } from '../game/game.model';
+import { Schema } from "mongoose";
+import IGameModel from "../entities/interfaces/IGameModel";
 
-export default (userId: string, game: IGameSchema) => {
+type mongooseIdType = string | Schema.Types.ObjectId;
+
+export default (userId: string, game: IGameModel<mongooseIdType, mongooseIdType>) => {
     const i = game.privatePlayerList.findIndex(p => String(p.id) === userId);
     const player = game.privatePlayerList[i];
     const global = {

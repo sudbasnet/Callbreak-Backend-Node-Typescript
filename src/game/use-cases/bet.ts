@@ -1,9 +1,10 @@
-import Game from '../game.model';
+import { GameRepository } from '../../repositories/GameRepository';
 import CustomError from '../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
 import gameResponse from '../../helpers/game-response';
 
 const bet: RequestHandler = async (req, res, next) => {
+    const Game = new GameRepository();
     const userId = req.userId;
     const gameId = req.params.gameId;
     const bet: number = req.body.bet;
@@ -39,7 +40,7 @@ const bet: RequestHandler = async (req, res, next) => {
             game.currentTurn = game.playerList[(i + 1) % 4].id;
         }
 
-        const savedGame = await game.save();
+        const savedGame = await Game.save(game);
         res.status(200).json(gameResponse(userId, savedGame));
     } catch (err) {
         next(err);

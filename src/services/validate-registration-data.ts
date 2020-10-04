@@ -1,7 +1,5 @@
 import { body } from 'express-validator';
-
-import User from '../user/user.model';
-
+import { UserRepository } from '../repositories/UserRepository';
 import CustomError from '../entities/classes/CustomError';
 
 export default
@@ -12,6 +10,7 @@ export default
             .isEmail()
             .withMessage('Please enter a valid email address.')
             .custom((value, { req }) => {
+                const User = new UserRepository();
                 return User.findOne({ email: value, active: true })
                     .then(user => {
                         if (user) {
@@ -20,6 +19,7 @@ export default
                     });
             })
             .custom((value, { req }) => {
+                const User = new UserRepository();
                 return User.findOne({ email: value, active: false })
                     .then(user => {
                         if (user) {

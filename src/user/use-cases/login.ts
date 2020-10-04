@@ -1,18 +1,14 @@
 import { RequestHandler } from 'express';
-
-import User from '../user.model';
-
+import { UserRepository } from '../../repositories/UserRepository';
 import CustomError from '../../entities/classes/CustomError';
-
 import bcrypt from 'bcryptjs';
-
 import jwt from 'jsonwebtoken';
-
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 const login: RequestHandler = async (req, res, next) => {
+    const User = new UserRepository();
     try {
         const user = await User.findOne({ email: req.body.email });
         if (!user) {

@@ -1,12 +1,7 @@
-import { model, Schema, Document } from 'mongoose';
-import IGameModel from '../entities/interfaces/IGameModel';
+import { model, Schema } from 'mongoose';
 import { initializedGameScoresItem, initializedPlayerListItem, initializedPrivatePlayerListItem } from '../entities/interfaces/IGameModel';
 import { IUserModel } from '../entities/interfaces/IUserModel';
-
-type mongooseIdType = string | Schema.Types.ObjectId;
-export interface IGameSchema extends IGameModel<mongooseIdType, mongooseIdType>, Document {
-    _id: mongooseIdType;
-}
+import { IGameSchema } from '../repositories/GameRepository';
 
 const GameSchema: Schema = new Schema({
     status: { type: String },
@@ -69,7 +64,7 @@ const GameSchema: Schema = new Schema({
 });
 
 GameSchema.methods = {
-    addUserToGame(user: IUserModel<mongooseIdType>) {
+    addUserToGame(user: IUserModel<any>) { // edit this later
         this.playerList.push(initializedPlayerListItem(user));
         this.privatePlayerList.push(initializedPrivatePlayerListItem(user));
         this.gameScores.push(initializedGameScoresItem(user._id));

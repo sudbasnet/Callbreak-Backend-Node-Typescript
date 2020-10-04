@@ -1,10 +1,11 @@
-import Game from '../../game.model';
+import { GameRepository } from '../../../repositories/GameRepository';
 import CustomError from '../../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
 import CallbreakBot from '../../../entities/classes/CallbreakBot';
 import ICard from '../../../entities/interfaces/ICard';
 
 const botMove: RequestHandler = async (req, res, next) => {
+    const Game = new GameRepository();
     const userId = req.userId;
     const gameId = req.params.gameId;
     const botId = req.params.botId;

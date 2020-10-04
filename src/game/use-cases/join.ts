@@ -1,10 +1,12 @@
-import Game from '../game.model';
-import User from '../../user/user.model';
+import { GameRepository } from '../../repositories/GameRepository';
+import { UserRepository } from '../../repositories/UserRepository';
 import { RequestHandler } from 'express';
 import CustomError from '../../entities/classes/CustomError';
 import gameResponse from '../../helpers/game-response';
 
 const join: RequestHandler = async (req, res, next) => {
+    const Game = new GameRepository();
+    const User = new UserRepository();
     const userId = req.userId;
     const userName = req.userName;
     const gameId = req.params.gameId;
@@ -32,7 +34,7 @@ const join: RequestHandler = async (req, res, next) => {
         }
         if (game.privatePlayerList.length <= 4) {
             game.addUserToGame(player);
-            const savedGame = await game.save();
+            const savedGame = await Game.save(game);
 
             res.status(200).json(gameResponse(userId, savedGame));
         }

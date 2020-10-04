@@ -1,7 +1,5 @@
 import { RequestHandler } from "express";
-
 import jwt from 'jsonwebtoken';
-
 import CustomError from '../entities/classes/CustomError';
 
 const verifyAuthentication: RequestHandler = (req, res, next) => {

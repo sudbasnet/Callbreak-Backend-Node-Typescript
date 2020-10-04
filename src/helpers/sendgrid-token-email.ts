@@ -1,8 +1,7 @@
 import nodemailer from 'nodemailer';
 import nodemailerSendgrid from 'nodemailer-sendgrid';
 import crypto from 'crypto';
-
-import User from '../user/user.model';
+import { UserRepository } from '../repositories/UserRepository';
 import CustomError from '../entities/classes/CustomError';
 import IEmailData from '../entities/interfaces/IEmailData';
 import { EEmailTokenType } from '../entities/enums/enums';
@@ -14,6 +13,7 @@ const emailTransporter = nodemailer.createTransport(
     }));
 
 const sendgridEmail = async (emailData: IEmailData) => {
+    const User = new UserRepository();
     try {
         crypto.randomBytes(32,
             async (err, buffer) => {
@@ -29,10 +29,10 @@ const sendgridEmail = async (emailData: IEmailData) => {
 
                     if (emailData.tokenType === EEmailTokenType.PASSWORD_RESET) {
                         user.passwordReset = token;
-                        await user.save();
+                        await User.save(user);
                     } else if (emailData.tokenType === EEmailTokenType.ACCOUNT_VERIFICATION) {
                         user.verification = token;
-                        await user.save();
+                        await User.save(user);
                     }
 
                     await emailTransporter.sendMail(

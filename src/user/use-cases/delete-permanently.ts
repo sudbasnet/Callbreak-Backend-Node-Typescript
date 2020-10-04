@@ -1,12 +1,16 @@
-import User from '../user.model';
-
+import { UserRepository } from '../../repositories/UserRepository';
 import CustomError from '../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
 
 // GET: http://localhost:xxxxx/user/delete_account
 const deletePermanently: RequestHandler = async (req, res, next) => {
+    const User = new UserRepository();
+    const userId = req.userId;
+    if (!userId) {
+        throw new CustomError('The user does not exist.', 404);
+    }
     try {
-        const user = await User.findById(req.userId);
+        const user = await User.findById(userId);
         if (!user) {
             throw new CustomError('User does not exist', 500);
         }

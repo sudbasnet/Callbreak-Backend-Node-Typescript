@@ -1,9 +1,10 @@
-import Game from '../game/game.model';
+import { GameRepository } from '../repositories/GameRepository';
 import { RequestHandler } from 'express';
 import CustomError from '../entities/classes/CustomError';
 import { EGameStatus } from '../entities/enums/enums';
 
 const isPlayerTurn: RequestHandler = async (req, res, next) => {
+    const Game = new GameRepository();
     const userId = req.userId;
     const userName = req.userName;
     const gameId = req.params.gameId;

@@ -1,12 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 import { EUserRoles } from '../entities/enums/enums';
-import { IUserModel } from '../entities/interfaces/IUserModel';
-
-type mongooseIdType = string | Schema.Types.ObjectId;
-export interface IUserSchema extends IUserModel<mongooseIdType>, Document {
-    _id: mongooseIdType;
-};
-
+import { IUserSchema } from '../repositories/UserRepository';
 
 const UserSchema: Schema = new Schema({
     name: { type: String, required: true, min: 3, max: 225 },

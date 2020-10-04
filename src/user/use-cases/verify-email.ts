@@ -1,12 +1,15 @@
-import User from '../user.model';
-
+import { UserRepository } from '../../repositories/UserRepository';
 import CustomError from '../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
 
 // localhost:xxxx/user/{userId}/verify/{verification_code}
 const verifyEmail: RequestHandler = async (req, res, next) => {
+    const User = new UserRepository();
     const userId = req.params.userId;
     const verificationCode = req.params.verificationCode;
+    if (!userId || !verificationCode) {
+        throw new CustomError('The user does not exist.', 404);
+    }
     try {
         const user = await User.findById(userId);
         if (!user) {
@@ -18,7 +21,7 @@ const verifyEmail: RequestHandler = async (req, res, next) => {
                 user.verification.expires = new Date();
             }
         }
-        const savedUser = await user.save();
+        const savedUser = await User.save(user);
         res.status(201).json({ message: 'User has been successfully verified. Thanks.' });
     } catch (err) {
         next(err);

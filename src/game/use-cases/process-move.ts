@@ -1,4 +1,4 @@
-import Game from '../game.model';
+import { GameRepository } from '../../repositories/GameRepository';
 import { RequestHandler } from 'express';
 import CustomError from '../../entities/classes/CustomError';
 import gameResponse from '../../helpers/game-response';
@@ -7,6 +7,7 @@ import Deck from '../../entities/classes/Deck';
 
 
 const placeCard: RequestHandler = async (req, res, next) => {
+    const Game = new GameRepository();
     const userId = req.userId;
     const userName = req.userName;
     const gameId = req.params.gameId;
@@ -101,7 +102,7 @@ const placeCard: RequestHandler = async (req, res, next) => {
 
         game.markModified('privatePlayerList');
         game.markModified('playerList');
-        const savedGame = await game.save();
+        const savedGame = await Game.save(game);
 
         res.status(200).json(gameResponse(userId, savedGame));
 

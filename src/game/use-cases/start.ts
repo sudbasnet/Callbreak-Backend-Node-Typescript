@@ -1,5 +1,5 @@
-import Game from '../game.model';
-import User from '../../user/user.model';
+import { UserRepository } from '../../repositories/UserRepository';
+import { GameRepository } from '../../repositories/GameRepository';
 import CustomError from '../../entities/classes/CustomError';
 import { RequestHandler } from 'express';
 import gameResponse from '../../helpers/game-response';
@@ -7,11 +7,13 @@ import Deck from '../../entities/classes/Deck';
 import { EGameStatus } from '../../entities/enums/enums';
 
 const fetchBotUserAccounts = async () => {
+    const User = new UserRepository();
     const botUserAccounts = await User.find({ role: 'bot' });
     return botUserAccounts;
 }
 
 const start: RequestHandler = async (req, res, next) => {
+    const Game = new GameRepository();
     const userId = req.userId;
     const gameId = req.params.gameId;
 
@@ -30,7 +32,7 @@ const start: RequestHandler = async (req, res, next) => {
             if (game.roundNumber === 1) {
                 let botUserAccounts = await fetchBotUserAccounts();
                 let botUserAccount;
-                while (game.privatePlayerList.length < 4) {
+                while (game.privatePlayerList.length < 4 && botUserAccounts.length > 0) {
                     botUserAccount = botUserAccounts.shift();
                     if (botUserAccount) {
                         game.addUserToGame(botUserAccount);
@@ -55,7 +57,7 @@ const start: RequestHandler = async (req, res, next) => {
             game.cardsOnTable = [];
             game.handNumber = 1;
             game.end = new Date();
-            const savedGame = await game.save();
+            const savedGame = await Game.save(game);
 
             res.status(200).json(gameResponse(userId, savedGame));
         } else {

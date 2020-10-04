@@ -1,26 +1,26 @@
-import Game, { IGameSchema } from '../game.model';
+import { GameRepository } from '../../repositories/GameRepository';
+import { UserRepository } from '../../repositories/UserRepository';
 import { RequestHandler } from 'express';
-import User from '../../user/user.model';
 import CustomError from '../../entities/classes/CustomError';
 import gameResponse from '../../helpers/game-response';
 import ICard from '../../entities/interfaces/ICard';
 import { ESuits, EGameStatus } from '../../entities/enums/enums';
 import Deck from '../../entities/classes/Deck';
 
-
 const gameData: RequestHandler = async (req, res, next) => {
+    const Game = new GameRepository();
+    const User = new UserRepository();
     const userId = req.userId;
     if (!userId) {
         throw new CustomError('The user does not exist.', 404);
     }
-
     try {
         const user = await User.findById(userId);
         if (!user) {
             throw new CustomError('Invalid Request', 404);
         }
 
-        let game: IGameSchema;
+        let game;
         const allActiveGames = await Game.find({ status: { $ne: EGameStatus.INACTIVE } });
         const gamesWithUser = allActiveGames.filter(g => g.playerList.map(p => String(p.id)).includes(userId));
         if (gamesWithUser.length > 0) {
@@ -29,7 +29,7 @@ const gameData: RequestHandler = async (req, res, next) => {
                 const i = game.privatePlayerList.findIndex(p => String(p.id) === userId);
                 const privatePlayer = game.privatePlayerList[i];
                 game.privatePlayerList[i].possibleMoves = getPossibleMoves(privatePlayer.cards, game.currentWinningCard, game.currentSuit);
-                const savedGame = await game.save();
+                const savedGame = await Game.save(game);
 
                 res.status(200).json(gameResponse(userId, savedGame));
             } else {
