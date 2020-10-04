@@ -3,6 +3,18 @@ export interface IToken {
     expires: Date;
 };
 
+export interface IPlayerStats {
+    totalGames: number;
+    totalFirstPosition: number;
+    totalSecondPosition: number;
+    totalThirdPostion: number;
+    mostRecentGameId: {
+        players: string[],
+        gameId: string
+    };
+    friends: string[];
+}
+
 export interface IUserModel<userIdType> {
     _id: userIdType;
     name: string;
@@ -10,6 +22,7 @@ export interface IUserModel<userIdType> {
     password: string;
     active: boolean;
     role?: string;
+    jwt?: IToken;
     verification?: IToken;
     passwordReset?: IToken;
 };
