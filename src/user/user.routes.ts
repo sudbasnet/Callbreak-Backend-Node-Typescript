@@ -8,6 +8,8 @@ const router = Router();
 
 router.put('/register', validateRegistrationData, userController.userRegistration, userController.requestVerificationEmail);
 
+router.put('/register-guest', userController.registerGuest);
+
 router.post('/login', userController.userLogin);
 
 router.get('/:userId/request-verification-email', userController.requestVerificationEmail);

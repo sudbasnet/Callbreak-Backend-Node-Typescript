@@ -1,6 +1,8 @@
 export enum EUserRoles {
     ADMIN = 'admin',
-    PLAYER = 'player'
+    PLAYER = 'player',
+    GUEST = 'guest',
+    BOT = 'bot'
 };
 
 export enum ESuits {

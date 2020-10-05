@@ -7,6 +7,7 @@ import verifyEmail from './use-cases/verify-email';
 import requestPasswordReset from './use-cases/request-password-reset';
 import requestVerificationEmail from './use-cases/request-verification-email';
 import updatePassword from './use-cases/update-password';
+import registerGuest from './use-cases/register-guest';
 
 export default {
     userRegistration,
@@ -17,5 +18,6 @@ export default {
     verifyEmail,
     requestPasswordReset,
     requestVerificationEmail,
-    updatePassword
+    updatePassword,
+    registerGuest
 };
