@@ -1,6 +1,6 @@
 import { Document, Schema, Model } from "mongoose";
 import IGameModel from "../entities/interfaces/IGameModel";
-import Game from '../game/game.model';
+import Game from '../game/game.mongodb.model';
 
 type mongooseIdType = string | Schema.Types.ObjectId;
 export interface IGameSchema extends IGameModel<mongooseIdType, mongooseIdType>, Document {

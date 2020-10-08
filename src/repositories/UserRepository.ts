@@ -1,6 +1,6 @@
 import { Document, Schema, Model } from "mongoose";
 import { IUserModel } from "../entities/interfaces/IUserModel";
-import User from '../user/user.model';
+import User from '../user/user.mongodb.model';
 
 type mongooseIdType = string | Schema.Types.ObjectId;
 export interface IUserSchema extends IUserModel<mongooseIdType>, Document {
