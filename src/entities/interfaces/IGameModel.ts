@@ -23,7 +23,7 @@ export interface IPlayer<userIdType> {
 
 export interface IGameScore<userIdType> {
     roundNumber: number,
-    playerId: userIdType,
+    id: userIdType,
     score: number
 };
 
@@ -75,7 +75,7 @@ export function initializedPlayerListItem<T>(user: IUserModel<T>) {
 export function initializedGameScoresItem<T>(userId: T) {
     return {
         roundNumber: 1,
-        playerId: userId,
+        id: userId,
         score: 0
     };
 };

@@ -28,7 +28,7 @@ const GameSchema: Schema = new Schema({
     gameScores: {
         type: [{
             roundNumber: { type: Number },
-            playerId: { type: Schema.Types.ObjectId, ref: 'User' },
+            id: { type: Schema.Types.ObjectId, ref: 'User' },
             score: { type: Number }
         }]
     },

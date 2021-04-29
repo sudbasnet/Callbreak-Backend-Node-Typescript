@@ -77,7 +77,7 @@ const placeCard: RequestHandler = async (req, res, next) => {
                     p.totalScore = Math.round(p.totalScore * 100) / 100;
                     game.gameScores.push({
                         roundNumber: game.roundNumber,
-                        playerId: p.id,
+                        id: p.id,
                         score: p.score
                     });
                 });
